@@ -240,7 +240,7 @@ public class ascoltatore implements ActionListener{
 				
 				System.out.println("hitsSimple: " + hitsSimple.length);
 				System.out.println("hitsStemming: " + hitsStemming.length);
-				hitsUnion = null;
+				hitsUnion = new ScoreDoc[0];
 		
 				if(hitsSimple != null){
 					hitsUnion = hitsSimple;

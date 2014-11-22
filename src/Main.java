@@ -77,9 +77,7 @@ public class Main {
 															pdfFile.getName(), content,
 															pdfFile.getAbsolutePath());
 							pdfBookSimple.setTitleReal(pdfBookSimple.getTitle());
-							System.out.println("Content without stemming: " + content);
 							content = stemming(content);
-							System.out.println("Content with stemming: " + content);
 							IndexItem pdfBookStemming = new IndexItem((long)pdfFile.getName().hashCode(), 
 															pdfFile.getName(), content,
 															pdfFile.getAbsolutePath());
@@ -93,9 +91,7 @@ public class Main {
 						doc.close();
 						writerSimple.close();
 						writerStemming.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					} 
+					} catch (IOException e) {e.getMessage();} 
 				}
 			}	 
 		}
@@ -143,7 +139,6 @@ public class Main {
 		{
 			obj.setCurrent(allWords[i]);
 			obj.stem();
-			System.out.println("Parola: " + allWords[i] + "\tStemming: " + obj.getCurrent());
 			textReturn = textReturn + " " + obj.getCurrent();
 		}
 		return textReturn;
