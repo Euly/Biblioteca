@@ -25,6 +25,7 @@ public class Main {
 	
 	public static void main(String[] args) {
 		System.out.println("PESCIOLINO\n");
+		System.out.println("sono la Diana\n");
 		window = new pagina();
 		inizializeBook();
 		window.getRdbtnTutto().doClick();
