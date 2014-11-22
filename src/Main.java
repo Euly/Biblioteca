@@ -24,6 +24,7 @@ public class Main {
 	private static LinkedList<String> allAuthors = new LinkedList<String>();
 	
 	public static void main(String[] args) {
+		System.out.println("PESCIOLINO\n");
 		window = new pagina();
 		inizializeBook();
 		window.getRdbtnTutto().doClick();
