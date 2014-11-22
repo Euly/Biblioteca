@@ -97,7 +97,6 @@ public class leggiXML {
 						}
 						
 						u.setGeneri_preferiti(lg);
-						u.inizializzoPunteggi();
 			            continue;
 					}
 				} //Fine tag inizio
@@ -108,7 +107,8 @@ public class leggiXML {
 					
 					/* Se e' il tag della fine di un utente lo aggiungo alla lista */
 					if (endElement.getName().getLocalPart().equals(UTENTE)) {
-						 utenti.add(u) ;
+						u.inizializzoPunteggi();
+						utenti.add(u) ;
 			        }
 			    } //Fine tag chiusura
 			} //Fine ciclo while

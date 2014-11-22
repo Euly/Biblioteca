@@ -36,19 +36,30 @@ public class utente {
 			punteggio_generi[i] = 0 ;
 		}
 		
-		/* Quando mi registro incremento di 1 il punteggio dei generi selezionati */
+		/* Quando mi registro incremento di 3 il punteggio dei generi selezionati */
 		for(int j = 0 ; j < generi_preferiti.size() ; j++){
-			String s = generi_preferiti.get(j) ;
 			for(int k = 0 ; k < 9 ; k++){
-				if(ORDINE_GENERI[k].equals(s))
+				if(ORDINE_GENERI[k].equals(generi_preferiti.get(j)))
 					punteggio_generi[k] = punteggio_generi[k] + 3 ;
 			}
 		}
 		
+		/* Se l'utente ha messo degli hobbies incremento di 2 il punteggio dei 
+		 * generi associati*/
 		for(int j = 0 ; j < hobbies.size() ; j++){
-			String s = hobbies.get(j) ;
 			for(int k = 0 ; k < 9 ; k++){
-				
+				if(ORDINE_GENERI[k].equals(getGenereHobbies(hobbies.get(j)))){
+					punteggio_generi[k] = punteggio_generi[k] + 2 ;
+				}
+			}
+		}
+		
+		/* Se l'utente ha messo una professione incremento di 1 il genere 
+		 * associato*/
+		if(!professione.equals("")){
+			for(int k = 0 ; k < 9 ; k++){
+				if(ORDINE_GENERI[k].equals(getGenereProfessione()))
+					punteggio_generi[k] = punteggio_generi[k] + 1 ;
 			}
 		}
 	}
@@ -146,32 +157,30 @@ public class utente {
 		return "";
 	}
 	
-	public LinkedList<String> getGenereHobbies(String singleHobbies){
-		LinkedList<String> genereHobbies = new LinkedList<String>();
-			
-			switch(singleHobbies){
-				case "Animali":
-				case "Computer": genereHobbies.add("Scientifico");
-				case "Antiquariato e restauro":
-				case "Giardinaggio":
-				case "Origami": genereHobbies.add("Classici");
-				case "Armi e tiro":
-				case "Caccia": genereHobbies.add("Horror");
-				case "Collezionismo":
-				case "Modellismo": genereHobbies.add("Storico");
-				case "Ricamo e cucito":
-				case "Cucina": genereHobbies.add("Ricette");
-				case "Disegno e pittura":
-				case "Giochi": genereHobbies.add("Fantasy");
-				case "Automobili":
-				case "Moto":
-				case "Sport": genereHobbies.add("Giallo e Thriller");
-				case "Fotografia":
-				case "Pesca":
-				case "Lettura": genereHobbies.add("Avventura");
-				case "TV":
-				case "Musica": genereHobbies.add("Fantascienza");
-			}
-		return genereHobbies;
+	public String getGenereHobbies(String singleHobbies){
+		switch(singleHobbies){
+			case "Animali":
+			case "Computer": return "Scientifico";
+			case "Antiquariato e restauro":
+			case "Giardinaggio":
+			case "Origami": return "Classici";
+			case "Armi e tiro":
+			case "Caccia": return "Horror";
+			case "Collezionismo":
+			case "Modellismo": return "Storico";
+			case "Ricamo e cucito":
+			case "Cucina": return "Ricette";
+			case "Disegno e pittura":
+			case "Giochi": return "Fantasy";
+			case "Automobili":
+			case "Moto":
+			case "Sport": return "Giallo e Thriller";
+			case "Fotografia":
+			case "Pesca":
+			case "Lettura": return "Avventura";
+			case "TV":
+			case "Musica": return "Fantascienza";
+		}
+		return "" ;
 	}
 }
