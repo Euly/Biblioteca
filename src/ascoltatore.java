@@ -7,7 +7,6 @@ import java.util.LinkedList;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import org.apache.lucene.document.Document;
