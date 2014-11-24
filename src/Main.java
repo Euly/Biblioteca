@@ -137,7 +137,7 @@ public class Main {
 		String textReturn = "";
 		for(int i = 0; i < allWords.length; i++)
 		{
-			obj.setCurrent(allWords[i]);
+			obj.setCurrent(allWords[i].toLowerCase());
 			obj.stem();
 			textReturn = textReturn + " " + obj.getCurrent();
 		}

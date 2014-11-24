@@ -358,7 +358,7 @@ public class ascoltatore implements ActionListener{
 		for(int i = 0; i < testoCercato.length; i++)
 		{
 			ItalianStemmer obj = new ItalianStemmer();
-			obj.setCurrent(testoCercato[i]);
+			obj.setCurrent(testoCercato[i].toLowerCase());
 			obj.stem();
 			querystr = querystr + " " + obj.getCurrent();
 		}
