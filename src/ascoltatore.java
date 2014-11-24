@@ -40,9 +40,6 @@ public class ascoltatore implements ActionListener{
 
 	private String anna = "Patata" ;
 
-	private IndexSearcher searcher;
-
-
 	public ascoltatore(){
 	}
 	
@@ -270,12 +267,16 @@ public class ascoltatore implements ActionListener{
 							IndexSearcher searcherStemming = new IndexSearcher(readerStemming);
 							
 							int spia = 0;
+							int idStemming = hitsStemming[j].doc;
+							Document dStemming = searcherStemming.doc(idStemming);
 							
 							for(int k = 0; k < lengthSimple; k++) {
-								if(searcherSimple.doc(k).get(IndexItem.TITLE_REAL)
-										.equals(searcherStemming.doc(j)
+								int idSimple = hitsSimple[k].doc;
+								Document dSimple = searcherSimple.doc(idSimple);
+								
+								if(dSimple.get(IndexItem.TITLE_REAL)
+										.equals(dStemming
 										.get(IndexItem.TITLE_REAL))){
-									System.out.println("CIAO");
 									spia = 1;
 									break;
 								}
@@ -334,7 +335,7 @@ public class ascoltatore implements ActionListener{
 			/* Fine ricerca su Autore */
 			
 			/* Ordinamento dei risultati per score utente se sono loggato */
-			if(Main.getPagina().getLoginButton().equals("Logout")) {
+/*			if(Main.getPagina().getLoginButton().equals("Logout")) {
 				System.out.println("ENTRO");
 				//ScoreDoc[] resultsNewOrder = new ScoreDoc[hitsUnion.length];
 				utente u = dialog.getUtenteLoggato(); 
@@ -353,7 +354,7 @@ public class ascoltatore implements ActionListener{
 					System.out.println("Score di " + hitsUnion[i].doc + " e': " + hitsUnion[i].score);
 				}
 				//Arrays.sort(hitsUnion);
-			}
+			}*/
 			/* Refresh della tabella */
 			Main.getPagina().getTableRisultati().setPreferredSize(new Dimension(Main.getPagina().getTableRisultati().getPreferredSize().width, 20*getRisultati().length));
 			Main.getPagina().getTableRisultati().setSize(new Dimension(Main.getPagina().getTableRisultati().getPreferredSize().width, 20*getRisultati().length));
@@ -413,7 +414,7 @@ public class ascoltatore implements ActionListener{
 			IndexReader reader = null;
 			try {
 				reader = DirectoryReader.open(dirMatch); 
-				searcher = new IndexSearcher(reader);
+				IndexSearcher searcher = new IndexSearcher(reader);
 				TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, true);
 				searcher.search(q, collector);
 				results = collector.topDocs().scoreDocs;
@@ -421,7 +422,7 @@ public class ascoltatore implements ActionListener{
 				
 				/* 4. display results */
 				System.out.println("Found " + results.length + " hits.");
-				if(tipoRicerca == 1){
+			//	if(tipoRicerca == 1){
 					//Se sono qui sto facendo la ricerca esatta per Titolo
 					for(int i=0; i < results.length; ++i) {
 						int docId = results[i].doc;
@@ -431,8 +432,9 @@ public class ascoltatore implements ActionListener{
 							resultsTitleSimple[count] = results[i];
 							count++;
 						}
+						System.out.println("Hits " + (i+1) + ". " + d.get(IndexItem.TITLE_REAL));
 					}
-				}
+			//	}
 				
 				// searcher can only be closed when there
 				// is no need to access the documents any more. 
@@ -448,9 +450,5 @@ public class ascoltatore implements ActionListener{
 		}
 		return results;
 	}
-	
-	private IndexSearcher getSearcher() {
-		return searcher;
-	}
-	
+
 }
