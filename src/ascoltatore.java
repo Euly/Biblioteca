@@ -418,7 +418,7 @@ public class ascoltatore implements ActionListener{
 				
 				/* Ordinamento dei risultati per score utente se sono loggato */
 				if(Main.getPagina().getLoginButton().getText().equals("Logout")) {
-					//ScoreDoc[] resultsNewOrder = new ScoreDoc[hitsUnion.length];
+					//ScoreDoc[] resultsNewOrder = results;
 					utente u = dialog.getUtenteLoggato(); 
 					for(int i = 0; i < results.length; i++) {
 						int docId = results[i].doc;
@@ -441,6 +441,7 @@ public class ascoltatore implements ActionListener{
 						Document d = searcher.doc(docId);
 						System.out.println("Score di " + d.get(IndexItem.TITLE_REAL) + " e': " + results[i].score);
 					}
+					
 					
 				}
 				// searcher can only be closed when there
@@ -484,10 +485,10 @@ class MyQuickSort {
              * from right side which is less then the pivot value. Once the search 
              * is done, then we exchange both numbers.
              */
-            while (array[i].score < pivot) {
+            while (array[i].score > pivot) {
                 i++;
             }
-            while (array[j].score > pivot) {
+            while (array[j].score < pivot) {
                 j--;
             }
             if (i <= j) {
