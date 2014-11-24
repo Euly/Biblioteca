@@ -332,27 +332,6 @@ public class ascoltatore implements ActionListener{
 			}
 			/* Fine ricerca su Autore */
 			
-			/* Ordinamento dei risultati per score utente se sono loggato */
-/*			if(Main.getPagina().getLoginButton().equals("Logout")) {
-				System.out.println("ENTRO");
-				//ScoreDoc[] resultsNewOrder = new ScoreDoc[hitsUnion.length];
-				utente u = dialog.getUtenteLoggato(); 
-				Document doc;
-				for(int i = 0; i < hitsUnion.length; i++) {
-					for(int j = 0; i < u.getOrdineGeneri().length; j++) {
-						try {
-							if((getSearcher().doc(hitsUnion[i].doc).get(IndexItem.KIND)).equals(u.getOrdineGeneri()[j])) {
-								hitsUnion[i].score = hitsUnion[i].score + u.getPunteggiGenere()[j];
-							}
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					}
-					System.out.println("Score di " + hitsUnion[i].doc + " e': " + hitsUnion[i].score);
-				}
-				//Arrays.sort(hitsUnion);
-			}*/
 			/* Refresh della tabella */
 			Main.getPagina().getTableRisultati().setPreferredSize(new Dimension(Main.getPagina().getTableRisultati().getPreferredSize().width, 20*getRisultati().length));
 			Main.getPagina().getTableRisultati().setSize(new Dimension(Main.getPagina().getTableRisultati().getPreferredSize().width, 20*getRisultati().length));
@@ -431,20 +410,37 @@ public class ascoltatore implements ActionListener{
 							count++;
 						}
 					}
+					results = new ScoreDoc[count];
+					for(int i = 0; i < count; i++)
+						results[i] = resultsTitleSimple[i];
 				}
 				
+				/* Ordinamento dei risultati per score utente se sono loggato */
+				if(Main.getPagina().getLoginButton().getText().equals("Logout")) {
+					//ScoreDoc[] resultsNewOrder = new ScoreDoc[hitsUnion.length];
+					utente u = dialog.getUtenteLoggato(); 
+					for(int i = 0; i < results.length; i++) {
+						int docId = results[i].doc;
+						Document d = searcher.doc(docId);
+						for(int j = 0; i < u.getOrdineGeneri().length; j++) {
+							if(d.get(IndexItem.KIND).equals(u.getOrdineGeneri()[j])) {
+								results[i].score = results[i].score + u.getPunteggiGenere()[j];
+								break;
+							}
+						}
+						System.out.println("Score di " + d.get(IndexItem.TITLE_REAL) + " e': " + results[i].score);
+					}
+					System.out.println("ENTRO DOPO");
+					Arrays.sort(results);
+					System.out.println("ENTRO");
+				}
 				// searcher can only be closed when there
 				// is no need to access the documents any more. 
-				
 				reader.close();
 			} catch (IOException e1) {e1.getMessage();} 
 		} catch (ParseException e2) {e2.getMessage();}
 		
-		if(tipoRicerca == 1){
-			results = new ScoreDoc[count];
-			for(int i = 0; i < count; i++)
-				results[i] = resultsTitleSimple[i];
-		}
+		
 		return results;
 	}
 
