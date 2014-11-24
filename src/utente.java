@@ -64,6 +64,10 @@ public class utente {
 		}
 	}
 	
+	public int[] getPunteggiGenere() {
+		return punteggio_generi;
+	}
+	
 	public int getID(){
 		return id ;
 	}
@@ -182,5 +186,9 @@ public class utente {
 			case "Musica": return "Fantascienza";
 		}
 		return "" ;
+	}
+	
+	public static String[] getOrdineGeneri() {
+		return ORDINE_GENERI;
 	}
 }

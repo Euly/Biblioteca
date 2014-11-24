@@ -194,6 +194,10 @@ public class pagina {
 		btnLogin.setLabel(s);
 	}
 	
+	public JButton getLoginButton(){
+		return btnLogin ;
+	}
+	
 	public int getID(){
 		return id ;
 	}

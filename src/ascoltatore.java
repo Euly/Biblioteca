@@ -4,6 +4,7 @@ import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.LinkedList;
 
 import javax.swing.JCheckBox;
@@ -36,7 +37,11 @@ public class ascoltatore implements ActionListener{
 	private ScoreDoc[] hitsSimple = null ;
 	private ScoreDoc[] hitsStemming = null ;
 	private ScoreDoc[] hitsUnion;
+
 	private String anna = "Patata" ;
+
+	private IndexSearcher searcher;
+
 
 	public ascoltatore(){
 	}
@@ -265,10 +270,12 @@ public class ascoltatore implements ActionListener{
 							IndexSearcher searcherStemming = new IndexSearcher(readerStemming);
 							
 							int spia = 0;
+							
 							for(int k = 0; k < lengthSimple; k++) {
 								if(searcherSimple.doc(k).get(IndexItem.TITLE_REAL)
 										.equals(searcherStemming.doc(j)
 										.get(IndexItem.TITLE_REAL))){
+									System.out.println("CIAO");
 									spia = 1;
 									break;
 								}
@@ -325,6 +332,29 @@ public class ascoltatore implements ActionListener{
 				hitsUnion = hitsSimple;
 			}
 			/* Fine ricerca su Autore */
+			
+			/* Ordinamento dei risultati per score utente se sono loggato */
+			if(Main.getPagina().getLoginButton().equals("Logout")) {
+				System.out.println("ENTRO");
+				//ScoreDoc[] resultsNewOrder = new ScoreDoc[hitsUnion.length];
+				utente u = dialog.getUtenteLoggato(); 
+				Document doc;
+				for(int i = 0; i < hitsUnion.length; i++) {
+					for(int j = 0; i < u.getOrdineGeneri().length; j++) {
+						try {
+							if((getSearcher().doc(hitsUnion[i].doc).get(IndexItem.KIND)).equals(u.getOrdineGeneri()[j])) {
+								hitsUnion[i].score = hitsUnion[i].score + u.getPunteggiGenere()[j];
+							}
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					System.out.println("Score di " + hitsUnion[i].doc + " e': " + hitsUnion[i].score);
+				}
+				//Arrays.sort(hitsUnion);
+			}
+			/* Refresh della tabella */
 			Main.getPagina().getTableRisultati().setPreferredSize(new Dimension(Main.getPagina().getTableRisultati().getPreferredSize().width, 20*getRisultati().length));
 			Main.getPagina().getTableRisultati().setSize(new Dimension(Main.getPagina().getTableRisultati().getPreferredSize().width, 20*getRisultati().length));
 			Main.getPagina().getTableRisultati().repaint();
@@ -383,28 +413,25 @@ public class ascoltatore implements ActionListener{
 			IndexReader reader = null;
 			try {
 				reader = DirectoryReader.open(dirMatch); 
-				IndexSearcher searcher = new IndexSearcher(reader);
+				searcher = new IndexSearcher(reader);
 				TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, true);
 				searcher.search(q, collector);
 				results = collector.topDocs().scoreDocs;
 				resultsTitleSimple = results;
 				
-				// 4. display results
+				/* 4. display results */
 				System.out.println("Found " + results.length + " hits.");
-				
-				for(int i=0; i < results.length; ++i) {
-					int docId = results[i].doc;
-					Document d = searcher.doc(docId);
-					if(tipoRicerca == 1){
-						System.out.println("Titolo reale: " + d.get(IndexItem.TITLE_REAL).toLowerCase());
-						System.out.println("Query cercata: " + querystr.toLowerCase());
-						//Se sono qui sto facendo la ricerca esatta per Titolo
+				if(tipoRicerca == 1){
+					//Se sono qui sto facendo la ricerca esatta per Titolo
+					for(int i=0; i < results.length; ++i) {
+						int docId = results[i].doc;
+						Document d = searcher.doc(docId);
+						/* Controllo che contenga esattamente la query cercata */
 						if((d.get(IndexItem.TITLE_REAL).toLowerCase()).contains(querystr.toLowerCase())){
 							resultsTitleSimple[count] = results[i];
 							count++;
 						}
 					}
-					System.out.println((i + 1) + ". " + d.get(IndexItem.ID) + "\t" + d.get(IndexItem.TITLE_REAL));
 				}
 				
 				// searcher can only be closed when there
@@ -420,6 +447,10 @@ public class ascoltatore implements ActionListener{
 				results[i] = resultsTitleSimple[i];
 		}
 		return results;
+	}
+	
+	private IndexSearcher getSearcher() {
+		return searcher;
 	}
 	
 }

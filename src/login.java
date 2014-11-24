@@ -22,6 +22,7 @@ public class login extends JDialog {
 	private JPasswordField passwordField;
 	private JTextField textField;
 	private ActionListener listener = new ascoltatore(this);
+	private utente utente_loggato;
 	
 	public login() {
 		initialize();
@@ -91,6 +92,7 @@ public class login extends JDialog {
 					Main.getPagina().getUtenti().get(i).getPW().equals(password)){
 				System.out.println("Sei un utente registrato.");
 				System.out.println("Password inserita: "+ password);
+				utente_loggato = Main.getPagina().getUtenti().get(i);
 				return true ;
 			}
 		}
@@ -98,6 +100,9 @@ public class login extends JDialog {
 		return false;
 	}
 	
+	public utente getUtenteLoggato() {
+		return utente_loggato;
+	}
 	public JTextField getUser(){
 		return textField ;
 	}
