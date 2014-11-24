@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -323,7 +324,8 @@ public class ascoltatore implements ActionListener{
 				hitsUnion = hitsSimple;
 			}
 			/* Fine ricerca su Autore */
-			
+			Main.getPagina().getTableRisultati().setPreferredSize(new Dimension(Main.getPagina().getTableRisultati().getPreferredSize().width, 20*getRisultati().length));
+			Main.getPagina().getTableRisultati().setSize(new Dimension(Main.getPagina().getTableRisultati().getPreferredSize().width, 20*getRisultati().length));
 			Main.getPagina().getTableRisultati().repaint();
 		}
 	}

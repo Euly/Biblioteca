@@ -37,6 +37,8 @@ public class pagina {
 	private FSDirectory simpleIndex, stemmingIndex;
 	private JTable risultati;
 	private JLabel info_ricerca;
+	private JPanel panel_table;
+	private JLabel lblU;
 	
 	public pagina() {
 		listener = new ascoltatore() ;
@@ -130,7 +132,7 @@ public class pagina {
 	
 		risultati = new JTable(new MyTableModel());
 		risultati.setRowHeight(20);
-		risultati.setPreferredSize(new Dimension(900, 450));
+		risultati.setPreferredSize(new Dimension(873, 450));
 		risultati.setPreferredScrollableViewportSize(risultati.getPreferredSize());
 		risultati.setFont(new Font("Seravek", Font.PLAIN, 18));
 		
