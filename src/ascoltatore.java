@@ -422,7 +422,7 @@ public class ascoltatore implements ActionListener{
 				
 				/* 4. display results */
 				System.out.println("Found " + results.length + " hits.");
-			//	if(tipoRicerca == 1){
+				if(tipoRicerca == 1){
 					//Se sono qui sto facendo la ricerca esatta per Titolo
 					for(int i=0; i < results.length; ++i) {
 						int docId = results[i].doc;
@@ -432,9 +432,8 @@ public class ascoltatore implements ActionListener{
 							resultsTitleSimple[count] = results[i];
 							count++;
 						}
-						System.out.println("Hits " + (i+1) + ". " + d.get(IndexItem.TITLE_REAL));
 					}
-			//	}
+				}
 				
 				// searcher can only be closed when there
 				// is no need to access the documents any more. 
