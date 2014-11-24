@@ -36,6 +36,7 @@ public class ascoltatore implements ActionListener{
 	private ScoreDoc[] hitsSimple = null ;
 	private ScoreDoc[] hitsStemming = null ;
 	private ScoreDoc[] hitsUnion;
+	private String anna = "Patata" ;
 
 	public ascoltatore(){
 	}
