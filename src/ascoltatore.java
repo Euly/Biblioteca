@@ -375,6 +375,7 @@ public class ascoltatore implements ActionListener{
 		return querystr;
 	}
 	
+	@SuppressWarnings("static-access")
 	public ScoreDoc[] searchQuery(String querystr, FSDirectory dirMatch, String[] matchField, int tipoRicerca){
 		ScoreDoc[] results = null;
 		ScoreDoc[] resultsTitleSimple = null;
@@ -422,7 +423,7 @@ public class ascoltatore implements ActionListener{
 					for(int i = 0; i < results.length; i++) {
 						int docId = results[i].doc;
 						Document d = searcher.doc(docId);
-						for(int j = 0; i < u.getOrdineGeneri().length; j++) {
+						for(int j = 0; j < u.getOrdineGeneri().length; j++) {
 							if(d.get(IndexItem.KIND).equals(u.getOrdineGeneri()[j])) {
 								results[i].score = results[i].score + u.getPunteggiGenere()[j];
 								break;
@@ -430,9 +431,17 @@ public class ascoltatore implements ActionListener{
 						}
 						System.out.println("Score di " + d.get(IndexItem.TITLE_REAL) + " e': " + results[i].score);
 					}
-					System.out.println("ENTRO DOPO");
-					Arrays.sort(results);
-					System.out.println("ENTRO");
+					
+					MyQuickSort res = new MyQuickSort();
+					res.sort(results);
+					
+					System.out.println("Stampo i results ordinati:");
+					for(int i = 0; i < results.length; i++) {
+						int docId = results[i].doc;
+						Document d = searcher.doc(docId);
+						System.out.println("Score di " + d.get(IndexItem.TITLE_REAL) + " e': " + results[i].score);
+					}
+					
 				}
 				// searcher can only be closed when there
 				// is no need to access the documents any more. 
@@ -444,4 +453,60 @@ public class ascoltatore implements ActionListener{
 		return results;
 	}
 
+}
+
+class MyQuickSort {
+    
+    private ScoreDoc[] array;
+    private int length;
+ 
+    public void sort(ScoreDoc[] inputArr) {
+         
+        if (inputArr == null || inputArr.length == 0) {
+            return;
+        }
+        this.array = inputArr;
+        length = inputArr.length;
+        quickSort(0, length - 1);
+    }
+ 
+    private void quickSort(int lowerIndex, int higherIndex) {
+         
+        int i = lowerIndex;
+        int j = higherIndex;
+        // calculate pivot number, I am taking pivot as middle index number
+        float pivot = array[lowerIndex+(higherIndex-lowerIndex)/2].score;
+        // Divide into two arrays
+        while (i <= j) {
+            /**
+             * In each iteration, we will identify a number from left side which 
+             * is greater then the pivot value, and also we will identify a number 
+             * from right side which is less then the pivot value. Once the search 
+             * is done, then we exchange both numbers.
+             */
+            while (array[i].score < pivot) {
+                i++;
+            }
+            while (array[j].score > pivot) {
+                j--;
+            }
+            if (i <= j) {
+                exchangeNumbers(i, j);
+                //move index to next position on both sides
+                i++;
+                j--;
+            }
+        }
+        // call quickSort() method recursively
+        if (lowerIndex < j)
+            quickSort(lowerIndex, j);
+        if (i < higherIndex)
+            quickSort(i, higherIndex);
+    }
+ 
+    private void exchangeNumbers(int i, int j) {
+        float temp = array[i].score;
+        array[i].score = array[j].score;
+        array[j].score = temp;
+    }
 }
