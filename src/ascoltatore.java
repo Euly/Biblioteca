@@ -506,8 +506,8 @@ class MyQuickSort {
     }
  
     private void exchangeNumbers(int i, int j) {
-        float temp = array[i].score;
-        array[i].score = array[j].score;
-        array[j].score = temp;
+        ScoreDoc temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
     }
 }
