@@ -21,7 +21,7 @@ public class login extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private JPasswordField passwordField;
 	private JTextField textField;
-	private ActionListener listener = new ascoltatore(this);
+	private ascoltatore listener = new ascoltatore(this);
 	private utente utente_loggato;
 	
 	public login() {

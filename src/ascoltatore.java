@@ -33,6 +33,7 @@ public class ascoltatore implements ActionListener, MouseListener {
 								 "Ricerca libera sull'autore (nome o cognome) con suggerimenti in caso di errore di digitazione."} ;
 	private login dialog = null ;
 	private registrazione form = null ;
+	private leggiLibro leggi_libro = null ;
 	private String password, username ;
 	private LinkedList<JCheckBox> generi_preferiti = new LinkedList<JCheckBox>() ;
 	private ScoreDoc[] hitsSimple = null ;
@@ -48,6 +49,10 @@ public class ascoltatore implements ActionListener, MouseListener {
 	
 	public ascoltatore(registrazione form){
 		this.form = form ;
+	}
+	
+	public ascoltatore(leggiLibro leggi_libro){
+		this.leggi_libro = leggi_libro ;
 	}
 
 	@Override
@@ -338,6 +343,12 @@ public class ascoltatore implements ActionListener, MouseListener {
 			Main.getPagina().getTableRisultati().setSize(new Dimension(Main.getPagina().getTableRisultati().getPreferredSize().width, 20*getRisultati().length));
 			Main.getPagina().getTableRisultati().repaint();
 		}
+		
+		if(e.getActionCommand().equals("Leggi")){
+			/* Qui in teoria manca il controllo se ha già letto o meno in 
+			 * precedenza il libro */
+			leggi_libro.setBackground(Color.green);
+		}
 	}
 	
 	public void closeDialog(){
@@ -346,6 +357,9 @@ public class ascoltatore implements ActionListener, MouseListener {
 		
 		if(form != null)
 			form.dispose();
+		
+		if(leggi_libro != null)
+			leggi_libro.dispose();
 	}
 	
 	public int getLengthSimpleResult()
@@ -483,6 +497,11 @@ public class ascoltatore implements ActionListener, MouseListener {
 			
 			//Se sono loggato e faccio doppio click apro la finestra con il bottone libro letto
 			if(Main.getPagina().getLoginButton().getText().equals("Logout") && e.getClickCount() == 2) {
+				System.out.println("STO FACENDO DOPPIO CLICK.");
+				leggi_libro = new leggiLibro();
+				leggi_libro.setLibro(docSelected.get(IndexItem.TITLE), docSelected.get(IndexItem.AUTHOR), docSelected.get(IndexItem.KIND));
+				leggi_libro.setAlwaysOnTop(true);
+				leggi_libro.setVisible(true);
 				//!!!!!!!!!!!!JFrame con bottole "Libro Letto"!!!!!!!!!!!!!
 				//Ora per provare metto che ad ogni doppio click il libro è stato letto, dopo c'è da aggiungere l'if attaccato al bottone
 				utente u = dialog.getUtenteLoggato();
@@ -521,60 +540,4 @@ public class ascoltatore implements ActionListener, MouseListener {
 		
 	}
 
-}
-
-class MyQuickSort {
-    
-    private ScoreDoc[] array;
-    private int length;
- 
-    public void sort(ScoreDoc[] inputArr) {
-         
-        if (inputArr == null || inputArr.length == 0) {
-            return;
-        }
-        this.array = inputArr;
-        length = inputArr.length;
-        quickSort(0, length - 1);
-    }
- 
-    private void quickSort(int lowerIndex, int higherIndex) {
-         
-        int i = lowerIndex;
-        int j = higherIndex;
-        // calculate pivot number, I am taking pivot as middle index number
-        float pivot = array[lowerIndex+(higherIndex-lowerIndex)/2].score;
-        // Divide into two arrays
-        while (i <= j) {
-            /**
-             * In each iteration, we will identify a number from left side which 
-             * is greater then the pivot value, and also we will identify a number 
-             * from right side which is less then the pivot value. Once the search 
-             * is done, then we exchange both numbers.
-             */
-            while (array[i].score > pivot) {
-                i++;
-            }
-            while (array[j].score < pivot) {
-                j--;
-            }
-            if (i <= j) {
-                exchangeNumbers(i, j);
-                //move index to next position on both sides
-                i++;
-                j--;
-            }
-        }
-        // call quickSort() method recursively
-        if (lowerIndex < j)
-            quickSort(lowerIndex, j);
-        if (i < higherIndex)
-            quickSort(i, higherIndex);
-    }
- 
-    private void exchangeNumbers(int i, int j) {
-        ScoreDoc temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-    }
 }

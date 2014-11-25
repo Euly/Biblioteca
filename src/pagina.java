@@ -3,8 +3,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.LinkedList;
 
 import javax.swing.ButtonGroup;
@@ -39,8 +37,6 @@ public class pagina {
 	private FSDirectory simpleIndex, stemmingIndex;
 	private JTable risultati;
 	private JLabel info_ricerca;
-	private JPanel panel_table;
-	private JLabel lblU;
 	
 	public pagina() {
 		listener = new ascoltatore() ;
@@ -277,5 +273,4 @@ public class pagina {
 	public void setInfo_ricerca(String text){
 		this.info_ricerca.setText(text);
 	}
-
 }
