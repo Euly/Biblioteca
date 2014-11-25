@@ -7,17 +7,24 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
 import net.miginfocom.swing.MigLayout;
+
 import javax.swing.JLabel;
+
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.SwingConstants;
 
 
-public class leggiLibro extends JDialog {
+public class leggiLibro extends JDialog implements ActionListener{
 	private final JPanel contentPanel = new JPanel();
 	private JLabel titolo ;
 	private JLabel autore ;
 	private JLabel genere ;
+	private Boolean letto = false;
 
 	public leggiLibro() {
 		initialize() ;
@@ -55,11 +62,13 @@ public class leggiLibro extends JDialog {
 		
 		JButton cancelButton = new JButton("Indietro");
 		cancelButton.setFont(new Font("Seravek", Font.PLAIN, 16));
+		cancelButton.setActionCommand("Indietro");
 		buttonPane.add(cancelButton);
 		
 		JButton leggiButton = new JButton("Leggi");
 		leggiButton.setFont(new Font("Seravek", Font.PLAIN, 16));
 		leggiButton.setActionCommand("Leggi");
+		leggiButton.addActionListener(this);
 		buttonPane.add(leggiButton);
 		getRootPane().setDefaultButton(leggiButton);
 	}
@@ -68,6 +77,19 @@ public class leggiLibro extends JDialog {
 		this.titolo.setText(titolo);
 		this.autore.setText(autore);
 		this.genere.setText(genere);
+	}
+
+	public Boolean isLibroLetto()
+	{
+		return this.letto;
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		if(e.getActionCommand().equals("Leggi")) {
+			this.letto = true;
+		}
 	}
 
 }

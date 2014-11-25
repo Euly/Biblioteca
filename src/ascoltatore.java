@@ -504,10 +504,13 @@ public class ascoltatore implements ActionListener, MouseListener {
 				leggi_libro.setVisible(true);
 				//!!!!!!!!!!!!JFrame con bottole "Libro Letto"!!!!!!!!!!!!!
 				//Ora per provare metto che ad ogni doppio click il libro è stato letto, dopo c'è da aggiungere l'if attaccato al bottone
-				utente u = dialog.getUtenteLoggato();
-				LinkedList<Document> libriLetti = u.getLibri_letti();
-				libriLetti.add(docSelected);
-				u.setLibri_letti(libriLetti);
+				if(leggi_libro.isLibroLetto()) 
+				{
+					utente u = dialog.getUtenteLoggato();
+					LinkedList<Document> libriLetti = u.getLibri_letti();
+					libriLetti.add(docSelected);
+					u.setLibri_letti(libriLetti);
+				}
 			}
 			
 		} catch (IOException e1) {
