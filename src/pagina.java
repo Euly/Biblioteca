@@ -3,6 +3,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.LinkedList;
 
 import javax.swing.ButtonGroup;
@@ -135,6 +137,7 @@ public class pagina {
 		risultati.setPreferredSize(new Dimension(873, 450));
 		risultati.setPreferredScrollableViewportSize(risultati.getPreferredSize());
 		risultati.setFont(new Font("Seravek", Font.PLAIN, 18));
+		risultati.addMouseListener(listener);
 		
 		JScrollPane scrollPane = new JScrollPane(risultati);
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -274,4 +277,5 @@ public class pagina {
 	public void setInfo_ricerca(String text){
 		this.info_ricerca.setText(text);
 	}
+
 }

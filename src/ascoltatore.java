@@ -3,8 +3,9 @@ import java.awt.Dimension;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.LinkedList;
 
 import javax.swing.JCheckBox;
@@ -26,7 +27,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 import org.tartarus.snowball.ext.ItalianStemmer;
 
-public class ascoltatore implements ActionListener{
+public class ascoltatore implements ActionListener, MouseListener {
 	private String [] message = {"Ricerca libera all'interno dei documenti.",
 								 "Ricerca libera sul titolo del libro. Con \"\" ricerca esatta.",
 								 "Ricerca libera sull'autore (nome o cognome) con suggerimenti in caso di errore di digitazione."} ;
@@ -452,6 +453,72 @@ public class ascoltatore implements ActionListener{
 		
 		
 		return results;
+	}
+	
+	
+	// Classi Override per MouseListener (serve per l'ascoltatore della JTable)
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		int row = Main.getPagina().getTableRisultati().rowAtPoint(e.getPoint());
+		int countSimpleHits = Main.getPagina().getListener().getLengthSimpleResult();
+		IndexReader readerSimple;
+		IndexReader readerStemming;
+		Document docSelected;
+		try {
+			readerSimple = DirectoryReader.open(Main.getPagina().getSimpleIndexLucene());
+			IndexSearcher searcherSimple = new IndexSearcher(readerSimple);
+			readerStemming = DirectoryReader.open(Main.getPagina().getStemmingIndexLucene());
+			IndexSearcher searcherStemming = new IndexSearcher(readerStemming);
+			int numDocSelected = hitsUnion[row].doc;
+			
+			if(row < countSimpleHits)
+				docSelected = searcherSimple.doc(numDocSelected);
+			else
+				docSelected = searcherStemming.doc(numDocSelected);
+			
+			readerSimple.close();
+			readerStemming.close();
+			
+			//Se sono loggato e faccio doppio click apro la finestra con il bottone libro letto
+			if(Main.getPagina().getLoginButton().getText().equals("Logout") && e.getClickCount() == 2) {
+				//!!!!!!!!!!!!JFrame con bottole "Libro Letto"!!!!!!!!!!!!!
+				//Ora per provare metto che ad ogni doppio click il libro è stato letto, dopo c'è da aggiungere l'if attaccato al bottone
+				utente u = dialog.getUtenteLoggato();
+				LinkedList<Document> libriLetti = u.getLibri_letti();
+				libriLetti.add(docSelected);
+				u.setLibri_letti(libriLetti);
+			}
+			
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
