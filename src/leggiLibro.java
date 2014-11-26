@@ -20,6 +20,7 @@ import java.awt.event.ActionListener;
 import javax.swing.SwingConstants;
 
 
+@SuppressWarnings("serial")
 public class leggiLibro extends JDialog implements ActionListener{
 	private final JPanel contentPanel = new JPanel();
 	private JLabel titolo ;

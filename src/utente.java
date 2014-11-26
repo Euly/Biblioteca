@@ -1,7 +1,5 @@
 import java.util.LinkedList;
 
-import org.apache.lucene.document.Document;
-
 public class utente { 
 	
 	private static final String [] ORDINE_GENERI = {"Ricette", 

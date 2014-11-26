@@ -229,8 +229,8 @@ public class ascoltatore implements ActionListener, MouseListener {
 			String[] matchField = new String[] {IndexItem.TITLE, IndexItem.AUTHOR, IndexItem.KIND, IndexItem.CONTENT};
 			JTextField textField = Main.getPagina().getCampo_cerca() ;
 			System.out.println("Testo cercato: " + textField.getText());
-			String querystrTuttoSimple = textField.getText(); //Stringa semplice per la ricerca su Tutto
-			String querystrStemming = getStemmingQuery(querystrTuttoSimple); //Stringa con stemming per la ricerca su Tutto e Titolo
+			String querystrTuttoSimple = getSimpleQuery(textField.getText()); //Stringa semplice per la ricerca su Tutto
+			String querystrStemming = getStemmingQuery(textField.getText()); //Stringa con stemming per la ricerca su Tutto e Titolo
 			String querystrTitleSimple = textField.getText().replace("\"", ""); //Stringa semplice per la ricerca su Titolo
 			int lengthSimple = 0;
 			hitsSimple = null;
@@ -311,7 +311,7 @@ public class ascoltatore implements ActionListener, MouseListener {
 			if(Main.getPagina().getRdbtnTitolo().isSelected()){
 				Main.getPagina().setInfo_ricerca(message[1]);
 				matchField = new String[] {IndexItem.TITLE};
-				if(querystrTuttoSimple.equals(querystrTitleSimple)){
+				if(textField.getText().equals(querystrTitleSimple)){
 					//Ricerca senza virgolette, cioe' ricerca libera (con stemming) sul Titotlo
 					hitsStemming = searchQuery(querystrStemming, Main.getPagina().getStemmingIndexLucene(), matchField, 0);
 					System.out.println("hitsStemming: " + hitsStemming.length);
@@ -335,7 +335,7 @@ public class ascoltatore implements ActionListener, MouseListener {
 			if(Main.getPagina().getRdbtnAutore().isSelected()){
 				Main.getPagina().setInfo_ricerca(message[2]);
 				matchField = new String[] {IndexItem.AUTHOR};
-				hitsSimple = searchQuery(querystrTuttoSimple, Main.getPagina().getSimpleIndexLucene(), matchField, 2);
+				hitsSimple = searchQuery(textField.getText(), Main.getPagina().getSimpleIndexLucene(), matchField, 2);
 				hitsUnion = hitsSimple;
 			}
 			/* Fine ricerca su Autore */
@@ -378,6 +378,17 @@ public class ascoltatore implements ActionListener, MouseListener {
 		return null ;
 	}
 	
+	public String getSimpleQuery(String textQuery){
+		textQuery = textQuery.replace("'", " ");
+		String[] testoCercato = textQuery.split(" ");
+		String querystr = "";
+		for(int i = 0; i < testoCercato.length; i++)
+		{
+			querystr = querystr + "+" + testoCercato[i].toLowerCase() + " ";
+		}
+		return querystr;
+	}
+	
 	public String getStemmingQuery(String textQuery){
 		textQuery = textQuery.replace("'", " ");
 		String[] testoCercato = textQuery.split(" ");
@@ -387,7 +398,7 @@ public class ascoltatore implements ActionListener, MouseListener {
 			ItalianStemmer obj = new ItalianStemmer();
 			obj.setCurrent(testoCercato[i].toLowerCase());
 			obj.stem();
-			querystr = querystr + " " + obj.getCurrent();
+			querystr = querystr + "+" + obj.getCurrent() + " ";
 		}
 		return querystr;
 	}
