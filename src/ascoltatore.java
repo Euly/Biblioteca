@@ -508,7 +508,6 @@ public class ascoltatore implements ActionListener, MouseListener {
 				/* Se ho fatto clik sul bottone "Leggi" allora aggiungo il libro alla lista dei libri */
 				if(leggi_libro.isLibroLetto()) 
 				{
-					System.out.println("Dentro");
 					utente u = dialog.getUtenteLoggato();
 					Long libroSelezionato = new Long(docSelected.get(IndexItem.ID)); 
 					LinkedList<Long> libriLetti = u.getLibri_letti();
@@ -524,7 +523,6 @@ public class ascoltatore implements ActionListener, MouseListener {
 					else
 						JOptionPane.showMessageDialog(null, "Hai gia' letto il libro.");
 				}
-				System.out.println("Dopo");
 			}
 			
 		} catch (IOException e1) {
