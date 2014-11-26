@@ -27,6 +27,7 @@ public class leggiLibro extends JDialog implements ActionListener{
 	private Boolean letto = false;
 
 	public leggiLibro() {
+		super();
 		initialize() ;
 	}
 	
@@ -63,6 +64,7 @@ public class leggiLibro extends JDialog implements ActionListener{
 		JButton cancelButton = new JButton("Indietro");
 		cancelButton.setFont(new Font("Seravek", Font.PLAIN, 16));
 		cancelButton.setActionCommand("Indietro");
+		cancelButton.addActionListener(this);
 		buttonPane.add(cancelButton);
 		
 		JButton leggiButton = new JButton("Leggi");
@@ -89,6 +91,11 @@ public class leggiLibro extends JDialog implements ActionListener{
 		// TODO Auto-generated method stub
 		if(e.getActionCommand().equals("Leggi")) {
 			this.letto = true;
+			this.dispose();
+		}
+		
+		if(e.getActionCommand().equals("Indietro")) {
+			this.dispose();
 		}
 	}
 
