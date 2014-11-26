@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
@@ -27,7 +28,7 @@ public class leggiLibro extends JDialog implements ActionListener{
 	private Boolean letto = false;
 
 	public leggiLibro() {
-		super();
+		super(Main.getPagina().getFrameParent(), Dialog.ModalityType.DOCUMENT_MODAL);
 		initialize() ;
 	}
 	

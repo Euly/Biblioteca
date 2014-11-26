@@ -6,10 +6,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.LinkedList;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import org.apache.lucene.document.Document;
@@ -502,15 +504,27 @@ public class ascoltatore implements ActionListener, MouseListener {
 				leggi_libro.setLibro(docSelected.get(IndexItem.TITLE), docSelected.get(IndexItem.AUTHOR), docSelected.get(IndexItem.KIND));
 				leggi_libro.setAlwaysOnTop(true);
 				leggi_libro.setVisible(true);
-				//!!!!!!!!!!!!JFrame con bottole "Libro Letto"!!!!!!!!!!!!!
-				//Ora per provare metto che ad ogni doppio click il libro è stato letto, dopo c'è da aggiungere l'if attaccato al bottone
+
+				/* Se ho fatto clik sul bottone "Leggi" allora aggiungo il libro alla lista dei libri */
 				if(leggi_libro.isLibroLetto()) 
 				{
+					System.out.println("Dentro");
 					utente u = dialog.getUtenteLoggato();
+					Long libroSelezionato = new Long(docSelected.get(IndexItem.ID)); 
 					LinkedList<Long> libriLetti = u.getLibri_letti();
-					libriLetti.add(new Long((docSelected.get(IndexItem.ID))));
-					u.setLibri_letti(libriLetti); 
+					Object[] libriLettiArray = libriLetti.toArray();
+					/* Controllo che il libro non sia già presente fra i suoi libri letti */
+					if(Arrays.binarySearch(libriLettiArray, libroSelezionato) < 0) 
+					{
+						/* Se non è presente lo aggiungo */
+						libriLetti.add(new Long((docSelected.get(IndexItem.ID))));
+						u.setLibri_letti(libriLetti); 
+						JOptionPane.showMessageDialog(null, "Libro letto.");
+					}
+					else
+						JOptionPane.showMessageDialog(null, "Hai gia' letto il libro.");
 				}
+				System.out.println("Dopo");
 			}
 			
 		} catch (IOException e1) {

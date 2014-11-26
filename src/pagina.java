@@ -149,6 +149,11 @@ public class pagina {
 		panel_2.add(scrollPane_1, "cell 0 0,grow");
 	}
 	
+	public JFrame getFrameParent()
+	{
+		return frame;
+	}
+	
 	public JPanel getPanel(){
 		return panel ;
 	}
