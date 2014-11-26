@@ -18,7 +18,7 @@ public class utente {
 	private String password = "";
 	private String professione = "";
 	private LinkedList<String> hobbies = new LinkedList<String>();
-	private LinkedList<Document> libri_letti = new LinkedList<Document>() ;
+	private LinkedList<String> libri_letti = new LinkedList<String>() ;
 	private LinkedList<String> generi_preferiti = new LinkedList<String>() ;
 	private int [] punteggio_generi = new int[9];
 	
@@ -114,11 +114,11 @@ public class utente {
 		this.hobbies = hobbies ;
 	}
 
-	public LinkedList<Document> getLibri_letti() {
+	public LinkedList<String> getLibri_letti() {
 		return libri_letti;
 	}
 
-	public void setLibri_letti(LinkedList<Document> libri_letti) {
+	public void setLibri_letti(LinkedList<String> libri_letti) {
 		this.libri_letti = libri_letti;
 	}
 
