@@ -507,8 +507,8 @@ public class ascoltatore implements ActionListener, MouseListener {
 				if(leggi_libro.isLibroLetto()) 
 				{
 					utente u = dialog.getUtenteLoggato();
-					LinkedList<String> libriLetti = u.getLibri_letti();
-					libriLetti.add((docSelected.get(IndexItem.TITLE_REAL)));
+					LinkedList<Long> libriLetti = u.getLibri_letti();
+					libriLetti.add(new Long((docSelected.get(IndexItem.ID))));
 					u.setLibri_letti(libriLetti); 
 				}
 			}
