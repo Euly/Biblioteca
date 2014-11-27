@@ -523,9 +523,8 @@ public class ascoltatore implements ActionListener, MouseListener {
 //					Long libroSelezionato = new Long(docSelected.get(IndexItem.ID)); 
 					LinkedList<Long> libriLetti = u.getLibri_letti();
 //					Object[] libriLettiArray = libriLetti.toArray();
-					
-						libriLetti.add(new Long((docSelected.get(IndexItem.ID))));
-						u.setLibri_letti(libriLetti); 
+					libriLetti.add(new Long((docSelected.get(IndexItem.ID))));
+					u.setLibri_letti(libriLetti); 
 				}
 			}
 			
