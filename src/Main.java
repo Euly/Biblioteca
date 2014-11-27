@@ -103,7 +103,7 @@ public class Main {
 		Document doc = new Document();
 		int spia = 0;
 		
-		doc.add(new StringField(pdfBook.ID, pdfBook.getId().toString(), Field.Store.YES));
+		doc.add(new TextField(pdfBook.ID, pdfBook.getId().toString(), Field.Store.YES));
 		doc.add(new StringField(pdfBook.PATH, pdfBook.getPath(), Field.Store.YES));
 		doc.add(new TextField(pdfBook.TITLE, pdfBook.getTitle(), Field.Store.YES));
 		doc.add(new StringField(pdfBook.TITLE_REAL, pdfBook.getTitleReal(), Field.Store.YES));

@@ -1,4 +1,17 @@
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
+
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopScoreDocCollector;
+import org.apache.lucene.util.Version;
 
 public class utente { 
 	
@@ -19,6 +32,7 @@ public class utente {
 	private LinkedList<Long> libri_letti = new LinkedList<Long>() ;
 	private LinkedList<String> generi_preferiti = new LinkedList<String>() ;
 	private int [] punteggio_generi = new int[9];
+	private LinkedList<Document> libri_consigliati = new LinkedList<Document>();
 	
 	
 	/* Costruttore usato se carico gli utenti registrati da file*/
@@ -190,5 +204,94 @@ public class utente {
 	
 	public static String[] getOrdineGeneri() {
 		return ORDINE_GENERI;
+	}
+	
+	public LinkedList<Document> getLibriConsigliati(){
+		LinkedList<String> autori = new LinkedList<String>();
+		ArrayList<Integer> pt_a = new ArrayList<Integer>();
+		
+		LinkedList<String> generi = new LinkedList<String>();
+		ArrayList<Integer> pt_g = new ArrayList<Integer>();
+		
+		Document d1 = null, d2 = null ;
+		
+		/* Calcolo i punteggi delle tabelle autori e generi */
+		for(int i = libri_letti.size()-1, a = 0, g = 0 ; i >= 0 ; i--){
+			d1 = SearchID(libri_letti.get(i).toString()) ;
+			int occorrenze_autore = 0 , occorrenze_genere = 0 ;
+			int punteggio_autore = 0 , punteggio_genere = 0 ;
+			
+			if(d1 != null && !autori.contains(d1.get(IndexItem.AUTHOR))){
+				occorrenze_autore ++ ;
+				punteggio_autore += (i+1)*10;
+				autori.add(a, d1.get(IndexItem.AUTHOR));
+			}
+			
+			if(d1 != null && !generi.contains(d1.get(IndexItem.KIND))){
+				occorrenze_genere ++ ;
+				punteggio_genere += (i+1)*10;
+				generi.add(g, d1.get(IndexItem.KIND));
+			}
+			
+			/* Controllo gli elementi (0,i-1) per cercare eventuali occorrenze 
+			 * di autori o generi ed aggiornare il punteggio dell'elemento i */
+			for(int j = 0 ; j < i ; j++){
+				d2 = SearchID(libri_letti.get(j).toString()) ;
+				
+				if(d2 != null && d1.get(IndexItem.AUTHOR).equals(d2.get(IndexItem.AUTHOR))){
+					occorrenze_autore ++ ;
+					punteggio_autore += (j+1)*10;
+				}
+				
+				if(d2 != null && d1.get(IndexItem.KIND).equals(d2.get(IndexItem.KIND))){
+					occorrenze_genere ++ ;
+					punteggio_genere += (j+1)*10;
+				}	
+			}
+			/* Aggiungo nella stessa posizione di autore il suo punteggio */
+			pt_a.add(a++, occorrenze_autore*punteggio_autore);
+			
+			/* Aggiungo nella stessa posizione di genere il suo punteggio */
+			pt_g.add(g++, occorrenze_genere*punteggio_genere);
+		}
+		
+		/* ---------------------------PER ANNA------------------------------
+		 * Ora ho una LinkedList con gli autori ed un ArrayList dei punteggi
+		 * nella stessa posizione per facilitarne l'uso. La stessa cosa vale
+		 * per i generi.
+		 * 
+		 * Manca la ricerca degli elementi massimi tra autore e genere e la 
+		 * scelta della proposta di libri da ritornare in libri_consigliati
+		 * (ora e' ancora a null, non ho inserito nessun document). */
+	
+		return libri_consigliati ;
+	}
+	
+	private Document SearchID(String idLibro){
+		String[] matchField = new String[] {IndexItem.ID};
+		Query q;
+
+		int hitsPerPage = 100;
+		IndexReader reader = null;
+		Document d = null;
+		
+		try {
+			q = new MultiFieldQueryParser(Version.LUCENE_42, matchField, Main.getPagina().getAnalyzer()).parse(idLibro);
+			reader = DirectoryReader.open(Main.getPagina().getSimpleIndexLucene()); 
+			IndexSearcher searcher = new IndexSearcher(reader);
+			TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, true);
+			searcher.search(q, collector);
+			ScoreDoc[] results = collector.topDocs().scoreDocs;
+			
+			if(results.length > 0) {
+				int docId = results[0].doc;
+				d = searcher.doc(docId);
+			}
+			reader.close();
+		} 
+		catch (IOException e1) {e1.getMessage();} 
+		catch(ParseException e2) {e2.getMessage();} 
+		
+		return d ;
 	}
 }
