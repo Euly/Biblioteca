@@ -512,19 +512,19 @@ public class ascoltatore implements ActionListener, MouseListener {
 			if(Main.getPagina().getLoginButton().getText().equals("Logout") && e.getClickCount() == 2) {
 				System.out.println("STO FACENDO DOPPIO CLICK.");
 				leggi_libro = new leggiLibro();
-				leggi_libro.setLibro(docSelected.get(IndexItem.TITLE), docSelected.get(IndexItem.AUTHOR), docSelected.get(IndexItem.KIND));
+				leggi_libro.setLibro(docSelected.get(IndexItem.TITLE_REAL), docSelected.get(IndexItem.AUTHOR), docSelected.get(IndexItem.KIND));
 				leggi_libro.setAlwaysOnTop(true);
 				leggi_libro.setVisible(true);
 
 				/* Se ho fatto clik sul bottone "Leggi" allora aggiungo il libro alla lista dei libri */
-				if(leggi_libro.isLibroLetto()) 
-				{
+				if(leggi_libro.isLibroLetto()) {
 					utente u = dialog.getUtenteLoggato();
 //					Long libroSelezionato = new Long(docSelected.get(IndexItem.ID)); 
 					LinkedList<Long> libriLetti = u.getLibri_letti();
 //					Object[] libriLettiArray = libriLetti.toArray();
-					libriLetti.add(new Long((docSelected.get(IndexItem.ID))));
+					libriLetti.add(Long.parseLong((docSelected.get(IndexItem.ID))));
 					u.setLibri_letti(libriLetti); 
+					new scriviXML(Main.getPagina().getUtenti());
 				}
 			}
 			

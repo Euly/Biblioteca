@@ -4,32 +4,8 @@
 		<Id>0</Id>
 		<Username>Diana</Username>
 		<Password>stella</Password>
-		<Professione>Informatico/a</Professione>
-		<Hobbies>Computer-Ricamo e cucito-Animali</Hobbies>
-		<Generi_preferiti>Classici-Fantasy-Storico-Giallo e Thriller-Avventura</Generi_preferiti>
-	</utente>
-	<utente>
-		<Id>1</Id>
-		<Username>Anna</Username>
-		<Password>patata</Password>
-		<Professione>Docente</Professione>
-		<Hobbies>Computer-Giochi-Moto-Musica</Hobbies>
-		<Generi_preferiti>Ricette-Fantasy-Avventura-Scientifico</Generi_preferiti>
-	</utente>
-	<utente>
-		<Id>2</Id>
-		<Username>Ross</Username>
-		<Password>asd</Password>
-		<Professione>Direttore</Professione>
-		<Hobbies>Armi e tiro-Computer-Animali</Hobbies>
-		<Generi_preferiti>Fantascienza-Fantasy-Scientifico</Generi_preferiti>
-	</utente>
-	<utente>
-		<Id>0</Id>
-		<Username>Pluto</Username>
-		<Password>pluto</Password>
-		<Professione>Avvocato</Professione>
-		<Hobbies>Armi e tiro-Cucina</Hobbies>
-		<Generi_preferiti>Horror-Fantascienza-Classici</Generi_preferiti>
+		<Professione>Regista</Professione>
+		<Hobbies>Animali-Cucina-Computer</Hobbies>
+		<Generi_preferiti>Ricette-Classici-Storico-Scientifico</Generi_preferiti>
 	</utente>
 </Utenti_Registrati>

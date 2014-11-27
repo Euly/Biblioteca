@@ -18,6 +18,7 @@ public class leggiXML {
 	static final String PROFESSIONE = "Professione";
 	static final String HOBBIES = "Hobbies";
 	static final String GENERI = "Generi_preferiti";
+	static final String LIBRI = "Libri_letti" ;
 	
 	private LinkedList<utente> utenti = new LinkedList<utente>();
 	
@@ -99,6 +100,22 @@ public class leggiXML {
 						u.setGeneri_preferiti(lg);
 			            continue;
 					}
+					
+					/* Setto i libri precedentemente letti dall'utente */
+					if (event.asStartElement().getName().getLocalPart().equals(LIBRI)) {
+						event = eventReader.nextEvent();
+						
+						String [] lib = event.asCharacters().getData().split(" ") ;
+						LinkedList<Long> l_lib = new LinkedList<Long>();
+						
+						for(int i=0 ; i<lib.length ; i++){
+							l_lib.add(i, Long.parseLong(lib[i]));
+						}
+						
+						u.setLibri_letti(l_lib);
+						continue ;
+					}
+					
 				} //Fine tag inizio
 				
 				/* Controllo il tag di chiusura */

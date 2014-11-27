@@ -35,8 +35,8 @@ public class leggiLibro extends JDialog implements ActionListener{
 	
 	private void initialize(){
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		setSize(new Dimension(300, 160));
-		setLocation(screenSize.width/2 - 250/2, screenSize.height/2 - 200/2);
+		setSize(new Dimension(500, 160));
+		setLocation(screenSize.width/2 - 500/2, screenSize.height/2 - 200/2);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
 		getContentPane().setLayout(new BorderLayout());

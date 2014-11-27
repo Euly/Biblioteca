@@ -85,6 +85,16 @@ public class scriviXML {
 	        	lista_generi += u.getGeneri_preferiti().get(k) ;
 	        	createNode(eventWriter, "Generi_preferiti", lista_generi);
 	        }
+	        
+	        if(u.getLibri_letti().size() > 0){
+	        	String lista_libri_letti = "" ;
+	        	int j = 0;
+	        	for(j = 0; j < u.getLibri_letti().size()-1 ; j++){
+	        		lista_libri_letti = lista_libri_letti + new Long(u.getLibri_letti().get(j)).toString() + " " ;
+	        	}
+	        	lista_libri_letti += new Long(u.getLibri_letti().get(j)).toString() ;
+	        	createNode(eventWriter, "Libri_letti", lista_libri_letti);
+	        }
 	        	
 	        
 	        eventWriter.add(tab);
