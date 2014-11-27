@@ -523,16 +523,9 @@ public class ascoltatore implements ActionListener, MouseListener {
 					Long libroSelezionato = new Long(docSelected.get(IndexItem.ID)); 
 					LinkedList<Long> libriLetti = u.getLibri_letti();
 					Object[] libriLettiArray = libriLetti.toArray();
-					/* Controllo che il libro non sia già presente fra i suoi libri letti */
-					if(Arrays.binarySearch(libriLettiArray, libroSelezionato) < 0) 
-					{
-						/* Se non è presente lo aggiungo */
+					
 						libriLetti.add(new Long((docSelected.get(IndexItem.ID))));
 						u.setLibri_letti(libriLetti); 
-						JOptionPane.showMessageDialog(null, "Libro letto.");
-					}
-					else
-						JOptionPane.showMessageDialog(null, "Hai gia' letto il libro.");
 				}
 			}
 			
