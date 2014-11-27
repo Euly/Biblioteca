@@ -144,11 +144,6 @@ public class Main {
 		return textReturn;
 	}
 	
-	public static LinkedList<String> getAllAuthors()
-	{
-		return allAuthors;
-	}
-	
 	public static String getCostanteIndex(){
 		return INDEX_DIR_SIMPLE ;
 	}
