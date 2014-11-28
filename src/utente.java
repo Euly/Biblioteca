@@ -214,6 +214,8 @@ public class utente {
 		ArrayList<Integer> pt_g = new ArrayList<Integer>();
 		
 		Document d1 = null, d2 = null ;
+		String autore_max = null ;
+		String genere_max = null ;
 		
 		/* Calcolo i punteggi delle tabelle autori e generi */
 		for(int i = libri_letti.size()-1, a = 0, g = 0 ; i >= 0 ; i--){
@@ -255,14 +257,8 @@ public class utente {
 			pt_g.add(g++, occorrenze_genere*punteggio_genere);
 		}
 		
-		/* ---------------------------PER ANNA------------------------------
-		 * Ora ho una LinkedList con gli autori ed un ArrayList dei punteggi
-		 * nella stessa posizione per facilitarne l'uso. La stessa cosa vale
-		 * per i generi.
-		 * 
-		 * Manca la ricerca degli elementi massimi tra autore e genere e la 
-		 * scelta della proposta di libri da ritornare in libri_consigliati
-		 * (ora e' ancora a null, non ho inserito nessun document). */
+		/* Qui inizializzare autore_max e genere_max --> ANNA */
+		libri_consigliati = getLibroAutoreGenere(autore_max, genere_max);
 	
 		return libri_consigliati ;
 	}
@@ -293,5 +289,99 @@ public class utente {
 		catch(ParseException e2) {e2.getMessage();} 
 		
 		return d ;
+	}
+	
+	public LinkedList<Document> getLibroAutoreGenere(String autore_max, String genere_max){
+		LinkedList<Document> libri_autore_genere = new LinkedList<Document>();
+		String[] matchField ;
+		Long[] hitsAuthor = null;
+		Long[] hitsKind = null;
+		LinkedList<Long> hitsIntersection = null;
+
+	/* Ricerca su Autore */
+		matchField = new String[] {IndexItem.AUTHOR};
+		hitsAuthor = consigliQuery(autore_max, matchField, 2);
+	/* Fine ricerca su Autore */
+
+	/* Ricerca su Genere */
+		matchField = new String[] {IndexItem.KIND};
+		hitsKind = consigliQuery(genere_max, matchField, 3);
+	/* Fine ricerca su Genere */
+
+	/* Devo trovare i libri dell'autore con punteggio massimo e del genere con punteggio massimo */
+		for(int i = 0 ; i < hitsAuthor.length ; i++){
+			for(int j = 0 ; j < hitsKind.length ; j++){
+				if(hitsAuthor[i] == hitsKind[j]){
+					hitsIntersection.add(hitsAuthor[i]);
+				}
+			}
+		}
+
+		for(int k = 0 ; k < hitsIntersection.size() ; k++){
+			Document libro = SearchID(hitsIntersection.get(k).toString()); /* Qui se vuoi cambiare SearchID che prende in ingresso un Long
+																 * invece che una String si puo' fare solo dopo i tuoi 
+																 * cambiamenti agli index */
+			libri_autore_genere.add(libro);
+		}
+
+		return libri_autore_genere ;
+	}
+	
+	public Long[] consigliQuery(String querystr, String[] matchField, int tipoRicerca){
+		Query q = new MultiFieldQueryParser(Version.LUCENE_42, matchField, Main.getPagina().getAnalyzer()).parse(querystr);
+		IndexReader reader = null;
+		ScoreDoc[] results = null;
+		Long[] hitsAuthor = null;
+		Long[] hitsGenere = null;
+
+		reader = DirectoryReader.open(Main.getPagina().getSimpleIndexLucene()); 
+		IndexSearcher searcher = new IndexSearcher(reader);
+		TopScoreDocCollector collector = TopScoreDocCollector.create(100, true);
+		searcher.search(q, collector);
+		results = collector.topDocs().scoreDocs;
+
+		/* Ricerca per autore */
+		if(tipoRicerca == 2){
+			LinkedList<Long> idAutoreMax = new LinkedList<Long>();
+			int count = 0;
+
+			for(int i=0; i < results.length; ++i) {
+				int docId = results[i].doc;
+				Document d = searcher.doc(docId);
+				/* Controllo che contenga esattamente la query cercata */
+				if((d.get(IndexItem.AUTHOR).toLowerCase()).contains(querystr.toLowerCase())){
+					idAutoreMax.add(d.get(IndexItem.ID));
+					count++;
+				}
+			}
+			hitsAuthor = new Long[count];
+			for(int i = 0; i < count; i++)
+				hitsAuthor[i] = idAutoreMax.get(i);
+
+			return hitsAuthor ;
+		}
+
+		/* Ricerca per genere */
+		if(tipoRicerca == 3){
+			LinkedList<Long> idGenereMax = new LinkedList<Long>();
+			int count = 0;
+
+			for(int i=0; i < results.length; ++i) {
+				int docId = results[i].doc;
+				Document d = searcher.doc(docId);
+				/* Controllo che contenga esattamente la query cercata */
+				if((d.get(IndexItem.KIND).toLowerCase()).contains(querystr.toLowerCase())){
+					idGenereMax.add(d.get(IndexItem.ID));
+					count++;
+				}
+			}
+			hitsGenere = new Long[count];
+			for(int i = 0; i < count; i++)
+				hitsGenere[i] = idGenereMax.get(i);
+			
+			return hitsGenere ;
+		}
+
+		return null ;
 	}
 }

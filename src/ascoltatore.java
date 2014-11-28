@@ -470,8 +470,8 @@ public class ascoltatore implements ActionListener, MouseListener {
 					
 					
 				}
-				// searcher can only be closed when there
-				// is no need to access the documents any more. 
+				/* searcher can only be closed when there is no need to access 
+				 * the documents any more. */
 				reader.close();
 			} catch (IOException e1) {e1.getMessage();} 
 		} catch (ParseException e2) {e2.getMessage();}
@@ -526,10 +526,7 @@ public class ascoltatore implements ActionListener, MouseListener {
 				}
 			}
 			
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		} catch (IOException e1) {e1.printStackTrace();}
 	}
 
 	@Override
