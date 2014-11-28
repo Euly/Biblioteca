@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.LongField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
@@ -103,7 +104,7 @@ public class Main {
 		Document doc = new Document();
 		int spia = 0;
 		
-		doc.add(new StringField(pdfBook.ID, pdfBook.getId().toString(), Field.Store.YES));
+		doc.add(new LongField(pdfBook.ID, pdfBook.getId(), Field.Store.YES));
 		doc.add(new StringField(pdfBook.PATH, pdfBook.getPath(), Field.Store.YES));
 		doc.add(new TextField(pdfBook.TITLE, pdfBook.getTitle(), Field.Store.YES));
 		doc.add(new StringField(pdfBook.TITLE_REAL, pdfBook.getTitleReal(), Field.Store.YES));

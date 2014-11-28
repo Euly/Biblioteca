@@ -5,12 +5,16 @@ import java.util.LinkedList;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.NumericRangeQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopScoreDocCollector;
+import org.apache.lucene.util.NumericUtils;
 import org.apache.lucene.util.Version;
 
 public class utente { 
@@ -219,66 +223,94 @@ public class utente {
 		
 		/* Calcolo i punteggi delle tabelle autori e generi */
 		for(int i = libri_letti.size()-1, a = 0, g = 0 ; i >= 0 ; i--){
-			d1 = SearchID(libri_letti.get(i).toString()) ;
+			d1 = SearchID(libri_letti.get(i)) ;
 			int occorrenze_autore = 0 , occorrenze_genere = 0 ;
 			int punteggio_autore = 0 , punteggio_genere = 0 ;
 			
 			if(d1 != null && !autori.contains(d1.get(IndexItem.AUTHOR))){
 				occorrenze_autore ++ ;
 				punteggio_autore += (i+1)*10;
-				autori.add(a, d1.get(IndexItem.AUTHOR));
 			}
-			
 			if(d1 != null && !generi.contains(d1.get(IndexItem.KIND))){
 				occorrenze_genere ++ ;
 				punteggio_genere += (i+1)*10;
-				generi.add(g, d1.get(IndexItem.KIND));
 			}
 			
 			/* Controllo gli elementi (0,i-1) per cercare eventuali occorrenze 
 			 * di autori o generi ed aggiornare il punteggio dell'elemento i */
-			for(int j = 0 ; j < i ; j++){
-				d2 = SearchID(libri_letti.get(j).toString()) ;
+			if((d1 != null && !autori.contains(d1.get(IndexItem.AUTHOR))) || (d1 != null && !generi.contains(d1.get(IndexItem.KIND)))) {
+				for(int j = 0 ; j < i ; j++){
+					d2 = SearchID(libri_letti.get(j)) ;
 				
-				if(d2 != null && d1.get(IndexItem.AUTHOR).equals(d2.get(IndexItem.AUTHOR))){
-					occorrenze_autore ++ ;
-					punteggio_autore += (j+1)*10;
+					if(d1 != null && !autori.contains(d1.get(IndexItem.AUTHOR))) {
+						if(d2 != null && d1.get(IndexItem.AUTHOR).equals(d2.get(IndexItem.AUTHOR))){
+							occorrenze_autore ++ ;
+							punteggio_autore += (j+1)*10;
+						}
+					}
+					if((d1 != null && !generi.contains(d1.get(IndexItem.KIND)))) {
+						if(d2 != null && d1.get(IndexItem.KIND).equals(d2.get(IndexItem.KIND))){
+							occorrenze_genere ++ ;
+							punteggio_genere += (j+1)*10;
+						}	
+					}
 				}
-				
-				if(d2 != null && d1.get(IndexItem.KIND).equals(d2.get(IndexItem.KIND))){
-					occorrenze_genere ++ ;
-					punteggio_genere += (j+1)*10;
-				}	
+				/* Aggiungo nella stessa posizione di autore il suo punteggio */
+				autori.add(a, d1.get(IndexItem.AUTHOR));
+				pt_a.add(a++, occorrenze_autore*punteggio_autore);
+				/* Aggiungo nella stessa posizione di genere il suo punteggio */
+				generi.add(g, d1.get(IndexItem.KIND));
+				pt_g.add(g++, occorrenze_genere*punteggio_genere);
 			}
-			/* Aggiungo nella stessa posizione di autore il suo punteggio */
-			pt_a.add(a++, occorrenze_autore*punteggio_autore);
-			
-			/* Aggiungo nella stessa posizione di genere il suo punteggio */
-			pt_g.add(g++, occorrenze_genere*punteggio_genere);
 		}
 		
+		/* Ricerca dell'autore e del genere con massimo punteggio */
+		int i_max_genere = 0;
+		int i_max_autore = 0;
+		for(int i = 1; i < Math.max(generi.size(), autori.size()); i++) {
+			if(i < generi.size()) {
+				if(pt_g.get(i_max_genere) < pt_g.get(i))
+					i_max_genere = i;
+			}
+			
+			if(i < autori.size()) {
+				if(pt_a.get(i_max_autore) < pt_a.get(i))
+					i_max_autore = i;
+			}
+		}
+		
+		System.out.println("Punteggio massimo genere: " + pt_g.get(i_max_genere));
+		System.out.println("Punteggio massimo autore: " + pt_g.get(i_max_autore));
+		
+		autore_max = autori.get(i_max_autore);
+		genere_max= generi.get(i_max_genere);
+
 		/* Qui inizializzare autore_max e genere_max --> ANNA */
 		libri_consigliati = getLibroAutoreGenere(autore_max, genere_max);
-	
+		
+		System.out.println("Dimensione: " + libri_consigliati.size());
+		for(int pippo = 0; pippo < libri_consigliati.size(); pippo++) {
+			System.out.println("Libro consigliato: " + libri_consigliati.get(pippo).get(IndexItem.TITLE_REAL));
+		}
+
 		return libri_consigliati ;
 	}
 	
-	private Document SearchID(String idLibro){
-		String[] matchField = new String[] {IndexItem.ID};
+	private Document SearchID(Long idLibro){
+		//String[] matchField = new String[] {IndexItem.ID};
 		Query q;
 
 		int hitsPerPage = 100;
 		IndexReader reader = null;
 		Document d = null;
-		
 		try {
-			q = new MultiFieldQueryParser(Version.LUCENE_42, matchField, Main.getPagina().getAnalyzer()).parse(idLibro);
+			//q = new MultiFieldQueryParser(Version.LUCENE_42, matchField, Main.getPagina().getAnalyzer()).parse(idLibro);
+			q = NumericRangeQuery.newLongRange(IndexItem.ID, idLibro, idLibro, true, true);
 			reader = DirectoryReader.open(Main.getPagina().getSimpleIndexLucene()); 
 			IndexSearcher searcher = new IndexSearcher(reader);
 			TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, true);
 			searcher.search(q, collector);
 			ScoreDoc[] results = collector.topDocs().scoreDocs;
-			
 			if(results.length > 0) {
 				int docId = results[0].doc;
 				d = searcher.doc(docId);
@@ -286,8 +318,6 @@ public class utente {
 			reader.close();
 		} 
 		catch (IOException e1) {e1.getMessage();} 
-		catch(ParseException e2) {e2.getMessage();} 
-		
 		return d ;
 	}
 	
@@ -296,7 +326,7 @@ public class utente {
 		String[] matchField ;
 		Long[] hitsAuthor = null;
 		Long[] hitsKind = null;
-		LinkedList<Long> hitsIntersection = null;
+		LinkedList<Long> hitsIntersection =  new LinkedList<Long>();
 
 	/* Ricerca su Autore */
 		matchField = new String[] {IndexItem.AUTHOR};
@@ -311,14 +341,14 @@ public class utente {
 	/* Devo trovare i libri dell'autore con punteggio massimo e del genere con punteggio massimo */
 		for(int i = 0 ; i < hitsAuthor.length ; i++){
 			for(int j = 0 ; j < hitsKind.length ; j++){
-				if(hitsAuthor[i] == hitsKind[j]){
+				if(hitsAuthor[i].toString().equals(hitsKind[j].toString())){
 					hitsIntersection.add(hitsAuthor[i]);
 				}
 			}
 		}
 
 		for(int k = 0 ; k < hitsIntersection.size() ; k++){
-			Document libro = SearchID(hitsIntersection.get(k).toString()); /* Qui se vuoi cambiare SearchID che prende in ingresso un Long
+			Document libro = SearchID(hitsIntersection.get(k)); /* Qui se vuoi cambiare SearchID che prende in ingresso un Long
 																 * invece che una String si puo' fare solo dopo i tuoi 
 																 * cambiamenti agli index */
 			libri_autore_genere.add(libro);
@@ -328,7 +358,9 @@ public class utente {
 	}
 	
 	public Long[] consigliQuery(String querystr, String[] matchField, int tipoRicerca){
-		Query q = new MultiFieldQueryParser(Version.LUCENE_42, matchField, Main.getPagina().getAnalyzer()).parse(querystr);
+		Query q;
+		try {
+			q = new MultiFieldQueryParser(Version.LUCENE_42, matchField, Main.getPagina().getAnalyzer()).parse(querystr);
 		IndexReader reader = null;
 		ScoreDoc[] results = null;
 		Long[] hitsAuthor = null;
@@ -339,7 +371,8 @@ public class utente {
 		TopScoreDocCollector collector = TopScoreDocCollector.create(100, true);
 		searcher.search(q, collector);
 		results = collector.topDocs().scoreDocs;
-
+		
+		
 		/* Ricerca per autore */
 		if(tipoRicerca == 2){
 			LinkedList<Long> idAutoreMax = new LinkedList<Long>();
@@ -347,10 +380,11 @@ public class utente {
 
 			for(int i=0; i < results.length; ++i) {
 				int docId = results[i].doc;
-				Document d = searcher.doc(docId);
+				Document d;
+				d = searcher.doc(docId);
 				/* Controllo che contenga esattamente la query cercata */
 				if((d.get(IndexItem.AUTHOR).toLowerCase()).contains(querystr.toLowerCase())){
-					idAutoreMax.add(d.get(IndexItem.ID));
+					idAutoreMax.add(Long.parseLong(d.get(IndexItem.ID)));
 					count++;
 				}
 			}
@@ -368,10 +402,11 @@ public class utente {
 
 			for(int i=0; i < results.length; ++i) {
 				int docId = results[i].doc;
-				Document d = searcher.doc(docId);
+				Document d;
+				d = searcher.doc(docId);
 				/* Controllo che contenga esattamente la query cercata */
 				if((d.get(IndexItem.KIND).toLowerCase()).contains(querystr.toLowerCase())){
-					idGenereMax.add(d.get(IndexItem.ID));
+					idGenereMax.add(Long.parseLong(d.get(IndexItem.ID)));
 					count++;
 				}
 			}
@@ -381,6 +416,8 @@ public class utente {
 			
 			return hitsGenere ;
 		}
+		} catch (ParseException e) { e.getMessage(); }
+		catch(IOException e) { e.getMessage(); }
 
 		return null ;
 	}
