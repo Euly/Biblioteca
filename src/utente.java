@@ -341,7 +341,7 @@ public class utente {
 	/* Devo trovare i libri dell'autore con punteggio massimo e del genere con punteggio massimo */
 		for(int i = 0 ; i < hitsAuthor.length ; i++){
 			for(int j = 0 ; j < hitsKind.length ; j++){
-				if(hitsAuthor[i].toString().equals(hitsKind[j].toString())){
+				if(hitsAuthor[i].compareTo((hitsKind[j])) == 0){
 					hitsIntersection.add(hitsAuthor[i]);
 				}
 			}
