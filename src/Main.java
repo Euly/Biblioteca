@@ -1,6 +1,17 @@
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
+import javax.xml.xquery.XQConnection;
+import javax.xml.xquery.XQDataSource;
+import javax.xml.xquery.XQException;
+import javax.xml.xquery.XQExpression;
+import javax.xml.xquery.XQResultSequence;
+
+import net.xqj.sedna.SednaXQDataSource;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -38,6 +49,7 @@ public class Main {
 		else
 			System.out.println("Il file non esiste.") ;
 
+		//cercaLibriPiuLetti();
 	}
 	
 	public static pagina getPagina(){
@@ -147,5 +159,72 @@ public class Main {
 	
 	public static String getCostanteIndex(){
 		return INDEX_DIR_SIMPLE ;
+	}
+	
+public static void cercaLibriPiuLetti() {
+		
+		XQDataSource xqs = new SednaXQDataSource();
+		String libri_letti = "";
+		try {
+			xqs.setProperty("serverName", "localhost");
+			xqs.setProperty("databaseName", "test");
+			XQConnection conn = xqs.getConnection("SYSTEM", "MANAGER");
+			XQExpression xqe = conn.createExpression();
+			
+			String xqueryString = "for $x in doc('Utenti_Registrati.xml')//utente return $x/Libri_letti/text()";
+			XQResultSequence rs = xqe.executeQuery(xqueryString);
+			
+			while(rs.next())
+			{
+				String libri = rs.getItemAsString(null);
+				libri = libri.replace("{ ", "").replace("\"", "").replace(" }", "").replaceAll("(text )", "");
+				libri_letti += " " + libri;
+			}
+			libri_letti = libri_letti.replaceAll("^[\\s]", "");
+			System.out.println("Libri letti: " + libri_letti);
+			String[] all_libri_letti = libri_letti.split(" ");
+			Set<Long> id_all_libri_letti = new HashSet<Long>();
+			for(int i = 0; i < all_libri_letti.length; i++) {
+				id_all_libri_letti.add(Long.parseLong(all_libri_letti[i]));
+			}
+			Object[] id_libri_letti = id_all_libri_letti.toArray();
+			LinkedList<Integer> count_libri_letti = new LinkedList<Integer>();
+			
+			for(int i = 0; i < id_libri_letti.length; i++) {
+				xqe.bindString(new QName("idLibroLetto"), id_libri_letti[i].toString() , null);
+				xqueryString = "declare variable $idLibroLetto external; " +
+					    "for $x in doc('Utenti_Registrati.xml')//utente " +
+					    "return $x/Libri_letti[contains(., $idLibroLetto)]/text()";
+				
+				rs = xqe.executeQuery(xqueryString);
+				int count = 0;
+				while(rs.next()) {
+				      System.out.println(rs.getItemAsString(null));
+				      count++;
+				}
+				count_libri_letti.add(count);	
+			}
+			
+			
+			/* ----------------------PER DIANA --------------------------
+			 * Il for qui sotto serve per ordinare i libri letto per numero di libri letti uguali fra gli utenti.
+			 * L'array id_libri_letti contiene l'id dei libri che hanno letto gli utenti e
+			 * la LinkedList count_libri_letti contiene il numero di volte che compare quel libro (fa riferimento al libro alla stessa
+			 * posizione dell'array detto prima.
+			 * Quindi bisognerebbe ordinare l'array e la lista secondo count_libri_letti cosi' poi possiamo restituire
+			 * tipo i primi 4 come libri del tipo "gli utenti registrati hanno letto bla bla bla bla".
+			 * Al momento questa funzione viene chiamata SOLO nel Main. Poi dovremmo metterla sia nel Main sia nel Logout.
+			 * Per il momento la riga nel Main dove viene richiamata (riga 52) l'ho commentata perchè per usare le XQuery devi fare
+			 * un procedimento particolare che ti devo spiegare a voce altrimenti non si riesce ad usare le XQuery. 
+			 * Però intanto se riesci ad ordinare i valori prima che lo faccio io se per caso ci lavori nel week end ti ho lascio questo
+			 * commento, se non ci lavori lo faremo poi. :)
+			 * Ah per il momento la funziona non ritorna nulla perchè devo ancora fare la parte di ricerca che dato l'id ti trova
+			 * il Document. Dopo abbiamo già i 4 libri con più "Letto" da parte dell'utente.
+			 */
+			for(int i = 0; i < count_libri_letti.size(); i++) {
+				System.out.println("Count di " + id_libri_letti[i] + " e' " + count_libri_letti.get(i));
+			}
+		} 
+		catch (XQException e) { e.getMessage(); }
 	}
 }

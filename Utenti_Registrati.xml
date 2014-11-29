@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Utenti_Registrati>
+	<utente>
+		<Id>0</Id>
+		<Username>Anna</Username>
+		<Password>patata</Password>
+		<Professione>Agente di Polizia</Professione>
+		<Hobbies>Automobili-Cucina-Animali</Hobbies>
+		<Generi_preferiti>Ricette-Fantasy-Scientifico</Generi_preferiti>
+		<Libri_letti>-828287138 1349957697 1237067240 -765649760</Libri_letti>
+	</utente>
+	<utente>
+		<Id>0</Id>
+		<Username>Diana</Username>
+		<Password>stella</Password>
+		<Professione>Barista</Professione>
+		<Hobbies>Antiquariato e restauro-Armi e tiro-Disegno e pittura</Hobbies>
+		<Generi_preferiti>Ricette-Avventura-Fantascienza</Generi_preferiti>
+		<Libri_letti>-765649760 2014518701 -828287138</Libri_letti>
+	</utente>
+</Utenti_Registrati>

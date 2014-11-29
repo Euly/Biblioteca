@@ -8,5 +8,8 @@
 	<classpathentry kind="lib" path="lib/lucene-core-4.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-queryparser-4.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/PDFBox-0.7.3.jar"/>
+	<classpathentry kind="lib" path="lib/sedna-xqj-1.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/xqj2-0.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/xqjapi.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
