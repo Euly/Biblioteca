@@ -69,6 +69,7 @@ public class ascoltatore implements ActionListener, MouseListener {
 			Main.getPagina().setLabelUtente("");
 			Main.getPagina().setLabelAccesso("Devi effettuare l'accesso.");
 			Main.getPagina().setLabelButton("Login");
+			Main.getPagina().setLabelConsigli("Altri utenti hanno letto");
 		}
 		
 		if(e.getActionCommand().equals("Accedi")){
@@ -80,6 +81,7 @@ public class ascoltatore implements ActionListener, MouseListener {
 				Main.getPagina().setLabelUtente(username+"!");
 				Main.getPagina().setLabelAccesso("");
 				Main.getPagina().setLabelButton("Logout");
+				Main.getPagina().setLabelConsigli("Scelti per te");
 				closeDialog();
 			}
 			else ; //manca finestra di errore
@@ -339,6 +341,7 @@ public class ascoltatore implements ActionListener, MouseListener {
 			/* Fine ricerca su Autore */
 			
 			/* Refresh della tabella */
+			Main.getPagina().setNumeroRisultati("Trovati "+hitsUnion.length+" risultati.");
 			Main.getPagina().getTableRisultati().setPreferredSize(new Dimension(Main.getPagina().getTableRisultati().getPreferredSize().width, 20*getRisultati().length));
 			Main.getPagina().getTableRisultati().setSize(new Dimension(Main.getPagina().getTableRisultati().getPreferredSize().width, 20*getRisultati().length));
 			Main.getPagina().getTableRisultati().repaint();
