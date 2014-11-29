@@ -5,16 +5,13 @@ import java.util.LinkedList;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.NumericRangeQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopScoreDocCollector;
-import org.apache.lucene.util.NumericUtils;
 import org.apache.lucene.util.Version;
 
 public class utente { 
@@ -218,8 +215,6 @@ public class utente {
 		ArrayList<Integer> pt_g = new ArrayList<Integer>();
 		
 		Document d1 = null, d2 = null ;
-		String autore_max = null ;
-		String genere_max = null ;
 		
 		/* Calcolo i punteggi delle tabelle autori e generi */
 		for(int i = libri_letti.size()-1, a = 0, g = 0 ; i >= 0 ; i--){
@@ -281,12 +276,9 @@ public class utente {
 		
 		System.out.println("Punteggio massimo genere: " + pt_g.get(i_max_genere));
 		System.out.println("Punteggio massimo autore: " + pt_g.get(i_max_autore));
-		
-		autore_max = autori.get(i_max_autore);
-		genere_max= generi.get(i_max_genere);
-
+	
 		/* Qui inizializzare autore_max e genere_max --> ANNA */
-		libri_consigliati = getLibroAutoreGenere(autore_max, genere_max);
+		libri_consigliati = getLibroAutoreGenere(autori.get(i_max_autore), pt_g.get(i_max_autore), generi.get(i_max_genere), pt_g.get(i_max_genere));
 		
 		System.out.println("Dimensione: " + libri_consigliati.size());
 		for(int pippo = 0; pippo < libri_consigliati.size(); pippo++) {
@@ -321,7 +313,7 @@ public class utente {
 		return d ;
 	}
 	
-	public LinkedList<Document> getLibroAutoreGenere(String autore_max, String genere_max){
+	public LinkedList<Document> getLibroAutoreGenere(String autore_max, Integer ptAutore_max, String genere_max, Integer ptGenere_max){
 		LinkedList<Document> libri_autore_genere = new LinkedList<Document>();
 		String[] matchField ;
 		Long[] hitsAuthor = null;
@@ -338,20 +330,34 @@ public class utente {
 		hitsKind = consigliQuery(genere_max, matchField, 3);
 	/* Fine ricerca su Genere */
 
-	/* Devo trovare i libri dell'autore con punteggio massimo e del genere con punteggio massimo */
+	/* Devo trovare i libri dell'autore con punteggio massimo e del genere con 
+	 * punteggio massimo  e che non siano gia' stati letti dall'utente */
 		for(int i = 0 ; i < hitsAuthor.length ; i++){
 			for(int j = 0 ; j < hitsKind.length ; j++){
-				if(hitsAuthor[i].compareTo((hitsKind[j])) == 0){
+				if(hitsAuthor[i].compareTo((hitsKind[j])) == 0 && !libri_letti.contains(hitsAuthor[i])){
 					hitsIntersection.add(hitsAuthor[i]);
 				}
 			}
 		}
-
+		
 		for(int k = 0 ; k < hitsIntersection.size() ; k++){
-			Document libro = SearchID(hitsIntersection.get(k)); /* Qui se vuoi cambiare SearchID che prende in ingresso un Long
-																 * invece che una String si puo' fare solo dopo i tuoi 
-																 * cambiamenti agli index */
+			Document libro = SearchID(hitsIntersection.get(k));
 			libri_autore_genere.add(libro);
+		}
+		
+		if(hitsIntersection.size() == 0){
+			if(ptAutore_max > ptGenere_max){
+				for(int i = 0 ; i < hitsAuthor.length ; i++){
+					Document libro = SearchID(hitsAuthor[i]);
+					libri_autore_genere.add(libro);
+				}
+			}
+			else {
+				for(int i = 0 ; i < hitsKind.length ; i++){
+					Document libro = SearchID(hitsKind[i]);
+					libri_autore_genere.add(libro);
+				}
+			}
 		}
 
 		return libri_autore_genere ;
