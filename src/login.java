@@ -92,7 +92,7 @@ public class login extends JDialog {
 				System.out.println("Sei un utente registrato.");
 				System.out.println("Password inserita: "+ password);
 				utente_loggato = Main.getPagina().getUtenti().get(i);
-				Main.getPagina().getUtenti().get(i).getLibriConsigliati();
+				Main.getPagina().setUtenteLoggato(utente_loggato);
 				return true ;
 			}
 		}

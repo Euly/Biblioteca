@@ -10,6 +10,7 @@ import java.util.LinkedList;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import org.apache.lucene.document.Document;
@@ -39,6 +40,7 @@ public class ascoltatore implements ActionListener, MouseListener {
 	private ScoreDoc[] hitsSimple = null ;
 	private ScoreDoc[] hitsStemming = null ;
 	private ScoreDoc[] hitsUnion;
+	private utente u_logged ;
 
 	public ascoltatore(){
 	}
@@ -70,6 +72,7 @@ public class ascoltatore implements ActionListener, MouseListener {
 			Main.getPagina().setLabelAccesso("Devi effettuare l'accesso.");
 			Main.getPagina().setLabelButton("Login");
 			Main.getPagina().setLabelConsigli("Altri utenti hanno letto");
+			Main.FindBooks();
 		}
 		
 		if(e.getActionCommand().equals("Accedi")){
@@ -83,8 +86,12 @@ public class ascoltatore implements ActionListener, MouseListener {
 				Main.getPagina().setLabelButton("Logout");
 				Main.getPagina().setLabelConsigli("Scelti per te");
 				closeDialog();
+				u_logged = Main.getPagina().getUtenteLoggato() ;
+				u_logged.getLibriConsigliati() ;
 			}
-			else ; //manca finestra di errore
+			else{
+				JOptionPane.showMessageDialog(dialog,"Username o password errati!","Errore", JOptionPane.ERROR_MESSAGE);
+			}	
 		}
 		
 		if(e.getActionCommand().equals("Registrati")){
@@ -348,9 +355,14 @@ public class ascoltatore implements ActionListener, MouseListener {
 		}
 		
 		if(e.getActionCommand().equals("Leggi")){
-			/* Qui in teoria manca il controllo se ha già letto o meno in 
-			 * precedenza il libro */
-			leggi_libro.setBackground(Color.green);
+			leggi_libro.setLibroLetto(true);
+			
+			Main.getPagina().getUtenteLoggato().getLibriConsigliati() ;
+			closeDialog();
+		}
+		
+		if(e.getActionCommand().equals("Indietro")) {
+			closeDialog();
 		}
 	}
 	
@@ -511,7 +523,6 @@ public class ascoltatore implements ActionListener, MouseListener {
 			
 			//Se sono loggato e faccio doppio click apro la finestra con il bottone libro letto
 			if(Main.getPagina().getLoginButton().getText().equals("Logout") && e.getClickCount() == 2) {
-				System.out.println("STO FACENDO DOPPIO CLICK.");
 				leggi_libro = new leggiLibro();
 				leggi_libro.setLibro(docSelected.get(IndexItem.TITLE_REAL), docSelected.get(IndexItem.AUTHOR), docSelected.get(IndexItem.KIND));
 				leggi_libro.setAlwaysOnTop(true);
@@ -520,9 +531,7 @@ public class ascoltatore implements ActionListener, MouseListener {
 				/* Se ho fatto clik sul bottone "Leggi" allora aggiungo il libro alla lista dei libri */
 				if(leggi_libro.isLibroLetto()) {
 					utente u = dialog.getUtenteLoggato();
-//					Long libroSelezionato = new Long(docSelected.get(IndexItem.ID)); 
 					LinkedList<Long> libriLetti = u.getLibri_letti();
-//					Object[] libriLettiArray = libriLetti.toArray();
 					libriLetti.add(Long.parseLong((docSelected.get(IndexItem.ID))));
 					u.setLibri_letti(libriLetti); 
 					new scriviXML(Main.getPagina().getUtenti());

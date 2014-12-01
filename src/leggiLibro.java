@@ -2,27 +2,23 @@ import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Toolkit;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import net.miginfocom.swing.MigLayout;
 
-import javax.swing.JLabel;
-
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.SwingConstants;
-
 
 @SuppressWarnings("serial")
-public class leggiLibro extends JDialog implements ActionListener{
+public class leggiLibro extends JDialog{
 	private final JPanel contentPanel = new JPanel();
+	private ascoltatore listener = new ascoltatore(this);
 	private JLabel titolo ;
 	private JLabel autore ;
 	private JLabel genere ;
@@ -66,13 +62,13 @@ public class leggiLibro extends JDialog implements ActionListener{
 		JButton cancelButton = new JButton("Indietro");
 		cancelButton.setFont(new Font("Seravek", Font.PLAIN, 16));
 		cancelButton.setActionCommand("Indietro");
-		cancelButton.addActionListener(this);
+		cancelButton.addActionListener(listener);
 		buttonPane.add(cancelButton);
 		
 		JButton leggiButton = new JButton("Leggi");
 		leggiButton.setFont(new Font("Seravek", Font.PLAIN, 16));
 		leggiButton.setActionCommand("Leggi");
-		leggiButton.addActionListener(this);
+		leggiButton.addActionListener(listener);
 		buttonPane.add(leggiButton);
 		getRootPane().setDefaultButton(leggiButton);
 	}
@@ -83,22 +79,13 @@ public class leggiLibro extends JDialog implements ActionListener{
 		this.genere.setText(genere);
 	}
 
-	public Boolean isLibroLetto()
-	{
+	public Boolean isLibroLetto(){
 		return this.letto;
 	}
 	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		if(e.getActionCommand().equals("Leggi")) {
-			this.letto = true;
-			this.dispose();
-		}
-		
-		if(e.getActionCommand().equals("Indietro")) {
-			this.dispose();
-		}
+	public void setLibroLetto(Boolean b){
+		this.letto = b ;
 	}
+	
 
 }

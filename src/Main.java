@@ -1,17 +1,18 @@
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Set;
+import java.util.TreeMap;
 
-import javax.xml.namespace.QName;
-import javax.xml.xquery.XQConnection;
-import javax.xml.xquery.XQDataSource;
-import javax.xml.xquery.XQException;
-import javax.xml.xquery.XQExpression;
-import javax.xml.xquery.XQResultSequence;
-
-import net.xqj.sedna.SednaXQDataSource;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -26,6 +27,8 @@ import org.apache.lucene.util.Version;
 import org.pdfbox.pdmodel.PDDocument;
 import org.pdfbox.util.PDFTextStripper;
 import org.tartarus.snowball.ext.ItalianStemmer;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public class Main {
 	private static String fileUtenti = "Utenti_Registrati.xml";
@@ -39,6 +42,7 @@ public class Main {
 		window = new pagina();
 		inizializeBook();
 		window.getRdbtnTutto().doClick();
+		FindBooks();
 		window.frame.setVisible(true);
 				
 		if(file.isFile()){
@@ -48,8 +52,8 @@ public class Main {
 		}
 		else
 			System.out.println("Il file non esiste.") ;
-
-		//cercaLibriPiuLetti();
+		
+		
 	}
 	
 	public static pagina getPagina(){
@@ -161,70 +165,89 @@ public class Main {
 		return INDEX_DIR_SIMPLE ;
 	}
 	
-public static void cercaLibriPiuLetti() {
-		
-		XQDataSource xqs = new SednaXQDataSource();
+	
+	public static void FindBooks(){
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = null;
 		String libri_letti = "";
+		String [] tutti_libri_letti ;
+		HashMap<Long, Integer> dictionary = new HashMap<Long, Integer>();
+		
 		try {
-			xqs.setProperty("serverName", "localhost");
-			xqs.setProperty("databaseName", "test");
-			XQConnection conn = xqs.getConnection("SYSTEM", "MANAGER");
-			XQExpression xqe = conn.createExpression();
+		    builder = factory.newDocumentBuilder();
+		    org.w3c.dom.Document document = builder.parse(new FileInputStream("Utenti_Registrati.xml"));
+		    XPath xPath =  XPathFactory.newInstance().newXPath();
+		    String expression = "/Utenti_Registrati/utente/Libri_letti";
+		    NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(document, XPathConstants.NODESET);
+		    for (int i = 0; i < nodeList.getLength(); i++) {
+		        libri_letti += (nodeList.item(i).getFirstChild().getNodeValue() + " ");
+		    }
+		    
+		} catch (ParserConfigurationException e) {
+		    e.printStackTrace();  
+		}
+		catch (SAXException e) {
+		    e.printStackTrace();
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}
+		catch (XPathExpressionException e) {
+			e.printStackTrace();
+		}
+		
+		tutti_libri_letti = libri_letti.split(" ");
+		System.out.println("Lunghezza: "+ tutti_libri_letti.length);
+		
+		for(int i = 0 ; i < tutti_libri_letti.length ; i++){
+			Integer value = dictionary.get(Long.parseLong(tutti_libri_letti[i])) ;
 			
-			String xqueryString = "for $x in doc('Utenti_Registrati.xml')//utente return $x/Libri_letti/text()";
-			XQResultSequence rs = xqe.executeQuery(xqueryString);
+			if(value == null)
+				dictionary.put(Long.parseLong(tutti_libri_letti[i]), 1) ;
+			else
+				dictionary.put(Long.parseLong(tutti_libri_letti[i]), ++value) ;
+		}
+		
+		TreeMap<Long, Integer> sortedDictionary = SortByValue(dictionary); 
+		System.out.println("Libri: "+sortedDictionary);
+		
+		Object[] id =  sortedDictionary.keySet().toArray() ;
+		
+		if(sortedDictionary.size() <= 5)
+			getPagina().setNumeroConsigli(sortedDictionary.size());
+		else
+			getPagina().setNumeroConsigli(5);
+		
+		for(int i = 0 ; i < sortedDictionary.size() && i < 5 ; i++) {
+			Document d = utente.SearchID(Long.parseLong(id[i].toString()));
 			
-			while(rs.next())
-			{
-				String libri = rs.getItemAsString(null);
-				libri = libri.replace("{ ", "").replace("\"", "").replace(" }", "").replaceAll("(text )", "");
-				libri_letti += " " + libri;
-			}
-			libri_letti = libri_letti.replaceAll("^[\\s]", "");
-			System.out.println("Libri letti: " + libri_letti);
-			String[] all_libri_letti = libri_letti.split(" ");
-			Set<Long> id_all_libri_letti = new HashSet<Long>();
-			for(int i = 0; i < all_libri_letti.length; i++) {
-				id_all_libri_letti.add(Long.parseLong(all_libri_letti[i]));
-			}
-			Object[] id_libri_letti = id_all_libri_letti.toArray();
-			LinkedList<Integer> count_libri_letti = new LinkedList<Integer>();
-			
-			for(int i = 0; i < id_libri_letti.length; i++) {
-				xqe.bindString(new QName("idLibroLetto"), id_libri_letti[i].toString() , null);
-				xqueryString = "declare variable $idLibroLetto external; " +
-					    "for $x in doc('Utenti_Registrati.xml')//utente " +
-					    "return $x/Libri_letti[contains(., $idLibroLetto)]/text()";
-				
-				rs = xqe.executeQuery(xqueryString);
-				int count = 0;
-				while(rs.next()) {
-				      System.out.println(rs.getItemAsString(null));
-				      count++;
-				}
-				count_libri_letti.add(count);	
-			}
-			
-			
-			/* ----------------------PER DIANA --------------------------
-			 * Il for qui sotto serve per ordinare i libri letto per numero di libri letti uguali fra gli utenti.
-			 * L'array id_libri_letti contiene l'id dei libri che hanno letto gli utenti e
-			 * la LinkedList count_libri_letti contiene il numero di volte che compare quel libro (fa riferimento al libro alla stessa
-			 * posizione dell'array detto prima.
-			 * Quindi bisognerebbe ordinare l'array e la lista secondo count_libri_letti cosi' poi possiamo restituire
-			 * tipo i primi 4 come libri del tipo "gli utenti registrati hanno letto bla bla bla bla".
-			 * Al momento questa funzione viene chiamata SOLO nel Main. Poi dovremmo metterla sia nel Main sia nel Logout.
-			 * Per il momento la riga nel Main dove viene richiamata (riga 52) l'ho commentata perchè per usare le XQuery devi fare
-			 * un procedimento particolare che ti devo spiegare a voce altrimenti non si riesce ad usare le XQuery. 
-			 * Però intanto se riesci ad ordinare i valori prima che lo faccio io se per caso ci lavori nel week end ti ho lascio questo
-			 * commento, se non ci lavori lo faremo poi. :)
-			 * Ah per il momento la funziona non ritorna nulla perchè devo ancora fare la parte di ricerca che dato l'id ti trova
-			 * il Document. Dopo abbiamo già i 4 libri con più "Letto" da parte dell'utente.
-			 */
-			for(int i = 0; i < count_libri_letti.size(); i++) {
-				System.out.println("Count di " + id_libri_letti[i] + " e' " + count_libri_letti.get(i));
-			}
-		} 
-		catch (XQException e) { e.getMessage(); }
+			getPagina().setConsiglio(i+1, d.get(IndexItem.KIND), d.get(IndexItem.AUTHOR), d.get(IndexItem.TITLE_REAL));
+		
+		}
+		
 	}
+	
+	public static TreeMap<Long, Integer> SortByValue (HashMap<Long, Integer> dictionary) {
+		ValueComparator vc =  new ValueComparator(dictionary);
+		TreeMap<Long,Integer> sortedMap = new TreeMap<Long,Integer>(vc);
+		sortedMap.putAll(dictionary);
+		return sortedMap;
+	}
+}
+
+
+class ValueComparator implements Comparator<Long> {
+	 
+    HashMap<Long, Integer> map;
+ 
+    public ValueComparator(HashMap<Long, Integer> base) {
+        this.map = base;
+    }
+ 
+    public int compare(Long a, Long b) {
+        if (map.get(a) >= map.get(b)) {
+            return -1;
+        } else {
+            return 1;
+        } // returning 0 would merge keys 
+    }
 }

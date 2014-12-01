@@ -16,6 +16,15 @@
 		<Professione>Barista</Professione>
 		<Hobbies>Antiquariato e restauro-Armi e tiro-Disegno e pittura</Hobbies>
 		<Generi_preferiti>Ricette-Avventura-Fantascienza</Generi_preferiti>
-		<Libri_letti>-765649760 2014518701 -828287138</Libri_letti>
+		<Libri_letti>-765649760 2014518701 -828287138 1087559306 -1300824124 78324559 -366117916 -730380733 445828223 1393206527</Libri_letti>
+	</utente>
+	<utente>
+		<Id>0</Id>
+		<Username>Matteo</Username>
+		<Password>banane</Password>
+		<Professione>Cuoco/a</Professione>
+		<Hobbies>Fotografia-TV-Computer</Hobbies>
+		<Generi_preferiti>Ricette-Horror-Fantascienza-Avventura</Generi_preferiti>
+		<Libri_letti>-1759071449 -175462197 1468947661 -1877477163 -66833782</Libri_letti>
 	</utente>
 </Utenti_Registrati>

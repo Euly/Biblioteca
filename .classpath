@@ -11,5 +11,8 @@
 	<classpathentry kind="lib" path="lib/sedna-xqj-1.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/xqj2-0.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/xqjapi.jar"/>
+	<classpathentry kind="lib" path="lib/sedna-xmldb.jar"/>
+	<classpathentry kind="lib" path="lib/xmldb.jar"/>
+	<classpathentry kind="lib" path="lib/sednadriver.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

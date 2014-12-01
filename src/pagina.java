@@ -49,6 +49,7 @@ public class pagina {
 	private JLabel c3_genere, c3_autore, c3_titolo;
 	private JLabel c4_genere, c4_autore, c4_titolo;
 	private JLabel c5_genere, c5_autore, c5_titolo;
+	private utente u_logged = null ;
 	 
 	
 	public pagina() {
@@ -413,6 +414,10 @@ public class pagina {
 	
 	/* Funzione per settare i consigli nei vari pannelli */
 	public void setConsiglio(int consiglio, String genere, String autore, String titolo){
+		if(titolo.length() > 21){
+			titolo = titolo.substring(0, 20)+"..." ;
+		}
+		
 		switch(consiglio){
 			case 1:
 					this.c1_genere.setText(genere);
@@ -481,6 +486,14 @@ public class pagina {
 					consiglio5.setVisible(true);
 					break;
 		}
+	}
+
+	public utente getUtenteLoggato() {
+		return u_logged;
+	}
+
+	public void setUtenteLoggato(utente u_logged) {
+		this.u_logged = u_logged;
 	}
 	
 }

@@ -207,7 +207,7 @@ public class utente {
 		return ORDINE_GENERI;
 	}
 	
-	public LinkedList<Document> getLibriConsigliati(){
+	public void getLibriConsigliati(){
 		LinkedList<String> autori = new LinkedList<String>();
 		ArrayList<Integer> pt_a = new ArrayList<Integer>();
 		
@@ -277,26 +277,26 @@ public class utente {
 		System.out.println("Punteggio massimo genere: " + pt_g.get(i_max_genere));
 		System.out.println("Punteggio massimo autore: " + pt_g.get(i_max_autore));
 	
-		/* Qui inizializzare autore_max e genere_max --> ANNA */
 		libri_consigliati = getLibroAutoreGenere(autori.get(i_max_autore), pt_g.get(i_max_autore), generi.get(i_max_genere), pt_g.get(i_max_genere));
 		
-		System.out.println("Dimensione: " + libri_consigliati.size());
-		for(int pippo = 0; pippo < libri_consigliati.size(); pippo++) {
-			System.out.println("Libro consigliato: " + libri_consigliati.get(pippo).get(IndexItem.TITLE_REAL));
+		if(libri_consigliati.size() <= 5)
+			Main.getPagina().setNumeroConsigli(libri_consigliati.size());
+		else
+			Main.getPagina().setNumeroConsigli(5);
+		
+		for(int i = 0 ; i < libri_consigliati.size() && i < 5 ; i++) {
+			Document d = libri_consigliati.get(i) ;
+			Main.getPagina().setConsiglio(i+1, d.get(IndexItem.KIND), d.get(IndexItem.AUTHOR), d.get(IndexItem.TITLE_REAL));
 		}
-
-		return libri_consigliati ;
 	}
 	
-	private Document SearchID(Long idLibro){
-		//String[] matchField = new String[] {IndexItem.ID};
+	public static Document SearchID(Long idLibro){
 		Query q;
 
 		int hitsPerPage = 100;
 		IndexReader reader = null;
 		Document d = null;
 		try {
-			//q = new MultiFieldQueryParser(Version.LUCENE_42, matchField, Main.getPagina().getAnalyzer()).parse(idLibro);
 			q = NumericRangeQuery.newLongRange(IndexItem.ID, idLibro, idLibro, true, true);
 			reader = DirectoryReader.open(Main.getPagina().getSimpleIndexLucene()); 
 			IndexSearcher searcher = new IndexSearcher(reader);
@@ -367,16 +367,16 @@ public class utente {
 		Query q;
 		try {
 			q = new MultiFieldQueryParser(Version.LUCENE_42, matchField, Main.getPagina().getAnalyzer()).parse(querystr);
-		IndexReader reader = null;
-		ScoreDoc[] results = null;
-		Long[] hitsAuthor = null;
-		Long[] hitsGenere = null;
+			IndexReader reader = null;
+			ScoreDoc[] results = null;
+			Long[] hitsAuthor = null;
+			Long[] hitsGenere = null;
 
-		reader = DirectoryReader.open(Main.getPagina().getSimpleIndexLucene()); 
-		IndexSearcher searcher = new IndexSearcher(reader);
-		TopScoreDocCollector collector = TopScoreDocCollector.create(100, true);
-		searcher.search(q, collector);
-		results = collector.topDocs().scoreDocs;
+			reader = DirectoryReader.open(Main.getPagina().getSimpleIndexLucene()); 
+			IndexSearcher searcher = new IndexSearcher(reader);
+			TopScoreDocCollector collector = TopScoreDocCollector.create(100, true);
+			searcher.search(q, collector);
+			results = collector.topDocs().scoreDocs;
 		
 		
 		/* Ricerca per autore */
