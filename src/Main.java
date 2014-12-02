@@ -42,7 +42,8 @@ public class Main {
 		window = new pagina();
 		inizializeBook();
 		window.getRdbtnTutto().doClick();
-		FindBooks();
+		if(file.isFile())
+			FindBooks();
 		window.frame.setVisible(true);
 				
 		if(file.isFile()){
@@ -180,9 +181,9 @@ public class Main {
 		    String expression = "/Utenti_Registrati/utente/Libri_letti";
 		    NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(document, XPathConstants.NODESET);
 		    for (int i = 0; i < nodeList.getLength(); i++) {
+		    	System.out.println("Ciao bello");
 		        libri_letti += (nodeList.item(i).getFirstChild().getNodeValue() + " ");
 		    }
-		    
 		} catch (ParserConfigurationException e) {
 		    e.printStackTrace();  
 		}
@@ -194,36 +195,36 @@ public class Main {
 		catch (XPathExpressionException e) {
 			e.printStackTrace();
 		}
+		if(!libri_letti.equals("")) {
+			tutti_libri_letti = libri_letti.split(" ");
+			System.out.println("Lunghezza: "+ tutti_libri_letti.length);
 		
-		tutti_libri_letti = libri_letti.split(" ");
-		System.out.println("Lunghezza: "+ tutti_libri_letti.length);
-		
-		for(int i = 0 ; i < tutti_libri_letti.length ; i++){
-			Integer value = dictionary.get(Long.parseLong(tutti_libri_letti[i])) ;
+			for(int i = 0 ; i < tutti_libri_letti.length ; i++){
+				Integer value = dictionary.get(Long.parseLong(tutti_libri_letti[i])) ;
 			
-			if(value == null)
-				dictionary.put(Long.parseLong(tutti_libri_letti[i]), 1) ;
+				if(value == null)
+					dictionary.put(Long.parseLong(tutti_libri_letti[i]), 1) ;
+				else
+					dictionary.put(Long.parseLong(tutti_libri_letti[i]), ++value) ;
+			}
+		
+			TreeMap<Long, Integer> sortedDictionary = SortByValue(dictionary); 
+			System.out.println("Libri: "+sortedDictionary);
+		
+			Object[] id =  sortedDictionary.keySet().toArray() ;
+		
+			if(sortedDictionary.size() <= 5)
+				getPagina().setNumeroConsigli(sortedDictionary.size());
 			else
-				dictionary.put(Long.parseLong(tutti_libri_letti[i]), ++value) ;
-		}
+				getPagina().setNumeroConsigli(5);
 		
-		TreeMap<Long, Integer> sortedDictionary = SortByValue(dictionary); 
-		System.out.println("Libri: "+sortedDictionary);
-		
-		Object[] id =  sortedDictionary.keySet().toArray() ;
-		
-		if(sortedDictionary.size() <= 5)
-			getPagina().setNumeroConsigli(sortedDictionary.size());
-		else
-			getPagina().setNumeroConsigli(5);
-		
-		for(int i = 0 ; i < sortedDictionary.size() && i < 5 ; i++) {
-			Document d = utente.SearchID(Long.parseLong(id[i].toString()));
+			for(int i = 0 ; i < sortedDictionary.size() && i < 5 ; i++) {
+				Document d = utente.SearchID(Long.parseLong(id[i].toString()));
 			
-			getPagina().setConsiglio(i+1, d.get(IndexItem.KIND), d.get(IndexItem.AUTHOR), d.get(IndexItem.TITLE_REAL));
+				getPagina().setConsiglio(i+1, d.get(IndexItem.KIND), d.get(IndexItem.AUTHOR), d.get(IndexItem.TITLE_REAL));
 		
+			}
 		}
-		
 	}
 	
 	public static TreeMap<Long, Integer> SortByValue (HashMap<Long, Integer> dictionary) {

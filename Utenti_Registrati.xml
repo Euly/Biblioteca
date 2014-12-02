@@ -2,29 +2,46 @@
 <Utenti_Registrati>
 	<utente>
 		<Id>0</Id>
-		<Username>Anna</Username>
-		<Password>patata</Password>
-		<Professione>Agente di Polizia</Professione>
-		<Hobbies>Automobili-Cucina-Animali</Hobbies>
-		<Generi_preferiti>Ricette-Fantasy-Scientifico</Generi_preferiti>
-		<Libri_letti>-828287138 1349957697 1237067240 -765649760</Libri_letti>
-	</utente>
-	<utente>
-		<Id>0</Id>
-		<Username>Diana</Username>
-		<Password>stella</Password>
-		<Professione>Barista</Professione>
-		<Hobbies>Antiquariato e restauro-Armi e tiro-Disegno e pittura</Hobbies>
-		<Generi_preferiti>Ricette-Avventura-Fantascienza</Generi_preferiti>
-		<Libri_letti>-765649760 2014518701 -828287138 1087559306 -1300824124 78324559 -366117916 -730380733 445828223 1393206527</Libri_letti>
-	</utente>
-	<utente>
-		<Id>0</Id>
-		<Username>Matteo</Username>
-		<Password>banane</Password>
+		<Username>Alessia</Username>
+		<Password>Alessia</Password>
 		<Professione>Cuoco/a</Professione>
-		<Hobbies>Fotografia-TV-Computer</Hobbies>
-		<Generi_preferiti>Ricette-Horror-Fantascienza-Avventura</Generi_preferiti>
-		<Libri_letti>-1759071449 -175462197 1468947661 -1877477163 -66833782</Libri_letti>
+		<Hobbies>Cucina-Ricamo e cucito-Origami</Hobbies>
+		<Generi_preferiti>Ricette-Avventura-Fantascienza</Generi_preferiti>
+		<Libri_letti>-377938522 2014518701</Libri_letti>
+	</utente>
+	<utente>
+		<Id>1</Id>
+		<Username>Samuele</Username>
+		<Password>Samuele</Password>
+		<Professione>Docente</Professione>
+		<Hobbies>Computer-Sport-Moto</Hobbies>
+		<Generi_preferiti>Scientifico-Giallo e Thriller-Avventura</Generi_preferiti>
+	</utente>
+	<utente>
+		<Id>2</Id>
+		<Username>Paolo</Username>
+		<Password>Paolo</Password>
+		<Professione>Studente</Professione>
+		<Hobbies>Disegno e pittura-Giochi-Computer</Hobbies>
+		<Generi_preferiti>Fantasy-Fantascienza-Avventura</Generi_preferiti>
+		<Libri_letti>1087559306 -1157488675 -1139893497</Libri_letti>
+	</utente>
+	<utente>
+		<Id>0</Id>
+		<Username>Pippo</Username>
+		<Password>Pippo</Password>
+		<Professione>Politico</Professione>
+		<Hobbies>Caccia-Collezionismo-Modellismo</Hobbies>
+		<Generi_preferiti>Ricette-Storico-Fantasy</Generi_preferiti>
+		<Libri_letti>1087559306 -392700009 -736561429 -1307842259 -1307842259</Libri_letti>
+	</utente>
+	<utente>
+		<Id>1</Id>
+		<Username>Sandra</Username>
+		<Password>Sandra</Password>
+		<Professione>Impiegato/a</Professione>
+		<Hobbies>Caccia-Animali-Sport</Hobbies>
+		<Generi_preferiti>Horror-Giallo e Thriller-Fantascienza</Generi_preferiti>
+		<Libri_letti>-175462197 -1172534550 2125360393 588954326</Libri_letti>
 	</utente>
 </Utenti_Registrati>
