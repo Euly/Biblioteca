@@ -261,34 +261,34 @@ public class utente {
 		
 		/* Ricerca dell'autore e del genere con massimo punteggio */
 		if(generi.size() > 0) {
-		int i_max_genere = 0;
-		int i_max_autore = 0;
-		for(int i = 1; i < Math.max(generi.size(), autori.size()); i++) {
-			if(i < generi.size()) {
-				if(pt_g.get(i_max_genere) < pt_g.get(i))
-					i_max_genere = i;
-			}
+			int i_max_genere = 0;
+			int i_max_autore = 0;
+			for(int i = 1; i < Math.max(generi.size(), autori.size()); i++) {
+				if(i < generi.size()) {
+					if(pt_g.get(i_max_genere) < pt_g.get(i))
+						i_max_genere = i;
+				}
 			
-			if(i < autori.size()) {
-				if(pt_a.get(i_max_autore) < pt_a.get(i))
-					i_max_autore = i;
+				if(i < autori.size()) {
+					if(pt_a.get(i_max_autore) < pt_a.get(i))
+						i_max_autore = i;
+				}
 			}
-		}
 		
-		System.out.println("Punteggio massimo genere " + i_max_genere + ": " + pt_g.get(i_max_genere));
-		System.out.println("Punteggio massimo autore " + i_max_genere + ": " + pt_a.get(i_max_autore));
+			System.out.println("Punteggio massimo genere " + i_max_genere + ": " + pt_g.get(i_max_genere));
+			System.out.println("Punteggio massimo autore " + i_max_genere + ": " + pt_a.get(i_max_autore));
 	
-		libri_consigliati = getLibroAutoreGenere(autori.get(i_max_autore), pt_a.get(i_max_autore), generi.get(i_max_genere), pt_g.get(i_max_genere));
+			libri_consigliati = getLibroAutoreGenere(autori.get(i_max_autore), pt_a.get(i_max_autore), generi.get(i_max_genere), pt_g.get(i_max_genere));
 		
-		if(libri_consigliati.size() <= 5)
-			Main.getPagina().setNumeroConsigli(libri_consigliati.size());
-		else
-			Main.getPagina().setNumeroConsigli(5);
+			if(libri_consigliati.size() <= 5)
+				Main.getPagina().setNumeroConsigli(libri_consigliati.size());
+			else
+				Main.getPagina().setNumeroConsigli(5);
 		
-		for(int i = 0 ; i < libri_consigliati.size() && i < 5 ; i++) {
-			Document d = libri_consigliati.get(i) ;
-			Main.getPagina().setConsiglio(i+1, d.get(IndexItem.KIND), d.get(IndexItem.AUTHOR), d.get(IndexItem.TITLE_REAL));
-		}
+			for(int i = 0 ; i < libri_consigliati.size() && i < 5 ; i++) {
+				Document d = libri_consigliati.get(i) ;
+				Main.getPagina().setConsiglio(i+1, d.get(IndexItem.KIND), d.get(IndexItem.AUTHOR), d.get(IndexItem.TITLE_REAL));
+			}
 		}
 	}
 	
