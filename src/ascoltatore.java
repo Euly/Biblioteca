@@ -263,14 +263,14 @@ public class ascoltatore implements ActionListener, MouseListener {
 					lengthSimple = hitsSimple.length;
 				}
 				if(hitsStemming != null){
-					ScoreDoc[] hitsUnionNew = new ScoreDoc[hitsUnion.length+hitsStemming.length];
+					ScoreDoc[] hitsUnionNew = new ScoreDoc[hitsStemming.length];
 					for (int w = 0; w < hitsUnion.length; w++){
 						hitsUnionNew[w] = hitsUnion[w];
 					}
 					
 					hitsUnion = hitsUnionNew;
 					int count = 0;
-					for(int j = 0; j < hitsStemming.length; j++){
+					for(int j = hitsStemming.length-1; j >= 0 && (count + hitsSimple.length) != hitsStemming.length; j--){
 						IndexReader readerSimple;
 						try {
 							readerSimple = DirectoryReader.open(Main.getPagina().getSimpleIndexLucene());
