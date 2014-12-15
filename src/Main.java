@@ -47,14 +47,9 @@ public class Main {
 		window.frame.setVisible(true);
 				
 		if(file.isFile()){
-			System.out.println("Il file esiste.") ;
 			leggiXML xml = new leggiXML() ;
 			window.setUtenti(xml.readConfig());
 		}
-		else
-			System.out.println("Il file non esiste.") ;
-		
-		
 	}
 	
 	public static pagina getPagina(){
@@ -181,23 +176,16 @@ public class Main {
 		    String expression = "/Utenti_Registrati/utente/Libri_letti";
 		    NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(document, XPathConstants.NODESET);
 		    for (int i = 0; i < nodeList.getLength(); i++) {
-		    	System.out.println("Ciao bello");
 		        libri_letti += (nodeList.item(i).getFirstChild().getNodeValue() + " ");
 		    }
-		} catch (ParserConfigurationException e) {
-		    e.printStackTrace();  
-		}
-		catch (SAXException e) {
-		    e.printStackTrace();
-		} catch (IOException e) {
-		    e.printStackTrace();
-		}
-		catch (XPathExpressionException e) {
-			e.printStackTrace();
-		}
+		} 
+		catch (ParserConfigurationException e) {e.printStackTrace();}
+		catch (SAXException e) {e.printStackTrace();} 
+		catch (IOException e) {e.printStackTrace();}
+		catch (XPathExpressionException e) {e.printStackTrace();}
+		
 		if(!libri_letti.equals("")) {
 			tutti_libri_letti = libri_letti.split(" ");
-			System.out.println("Lunghezza: "+ tutti_libri_letti.length);
 		
 			for(int i = 0 ; i < tutti_libri_letti.length ; i++){
 				Integer value = dictionary.get(Long.parseLong(tutti_libri_letti[i])) ;
@@ -209,8 +197,6 @@ public class Main {
 			}
 		
 			TreeMap<Long, Integer> sortedDictionary = SortByValue(dictionary); 
-			System.out.println("Libri: "+sortedDictionary);
-		
 			Object[] id =  sortedDictionary.keySet().toArray() ;
 		
 			if(sortedDictionary.size() <= 5)

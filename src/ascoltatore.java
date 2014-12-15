@@ -41,6 +41,7 @@ public class ascoltatore implements ActionListener, MouseListener {
 	private ScoreDoc[] hitsStemming = null ;
 	private ScoreDoc[] hitsUnion;
 	private utente u_logged ;
+	private Document docSelected;
 
 	public ascoltatore(){
 	}
@@ -235,7 +236,6 @@ public class ascoltatore implements ActionListener, MouseListener {
 		if(e.getActionCommand().equals("Cerca")){
 			String[] matchField = new String[] {IndexItem.TITLE, IndexItem.AUTHOR, IndexItem.KIND, IndexItem.CONTENT};
 			JTextField textField = Main.getPagina().getCampo_cerca() ;
-			System.out.println("Testo cercato: " + textField.getText());
 			String querystrTuttoSimple = getSimpleQuery(textField.getText()); //Stringa semplice per la ricerca su Tutto
 			String querystrStemming = getStemmingQuery(textField.getText()); //Stringa con stemming per la ricerca su Tutto e Titolo
 			String querystrTitleSimple = textField.getText().replace("\"", ""); //Stringa semplice per la ricerca su Titolo
@@ -254,8 +254,6 @@ public class ascoltatore implements ActionListener, MouseListener {
 				hitsSimple = searchQuery(querystrTuttoSimple, Main.getPagina().getSimpleIndexLucene(), matchField, 0);
 				hitsStemming = searchQuery(querystrStemming, Main.getPagina().getStemmingIndexLucene(), matchField, 0);
 				
-				System.out.println("hitsSimple: " + hitsSimple.length);
-				System.out.println("hitsStemming: " + hitsStemming.length);
 				hitsUnion = new ScoreDoc[0];
 		
 				if(hitsSimple != null && hitsSimple.length != 0){
@@ -308,7 +306,6 @@ public class ascoltatore implements ActionListener, MouseListener {
 					}
 					hitsUnion = hitsUnionNew;
 				}
-				System.out.println("Lunghezza Union: " + hitsUnion.length);
 			}
 			/* Fine ricerca su Tutto */
 			
@@ -321,14 +318,13 @@ public class ascoltatore implements ActionListener, MouseListener {
 				if(textField.getText().equals(querystrTitleSimple)){
 					//Ricerca senza virgolette, cioe' ricerca libera (con stemming) sul Titotlo
 					hitsStemming = searchQuery(querystrStemming, Main.getPagina().getStemmingIndexLucene(), matchField, 0);
-					System.out.println("hitsStemming: " + hitsStemming.length);
+					
 					if (hitsStemming != null)
 						hitsUnion = hitsStemming;
 				}
-				else{
+				else {
 					//Ricerca con virgolette, cioe' ricerca esatta (senza stemming) su Titolo
 					hitsSimple = searchQuery(querystrTitleSimple, Main.getPagina().getSimpleIndexLucene(), matchField, 1);
-					System.out.println("hitsSimple: " + hitsSimple.length);
 					
 					if(hitsSimple != null)
 						hitsUnion = hitsSimple;
@@ -357,7 +353,12 @@ public class ascoltatore implements ActionListener, MouseListener {
 		if(e.getActionCommand().equals("Leggi")){
 			leggi_libro.setLibroLetto(true);
 			
-			Main.getPagina().getUtenteLoggato().getLibriConsigliati() ;
+			utente u = Main.getPagina().getUtenteLoggato() ;
+			LinkedList<Long> libriLetti = u.getLibri_letti();
+			libriLetti.add(Long.parseLong((docSelected.get(IndexItem.ID))));
+			u.setLibri_letti(libriLetti); 
+			new scriviXML(Main.getPagina().getUtenti());
+			u.getLibriConsigliati() ;
 			closeDialog();
 		}
 		
@@ -440,7 +441,6 @@ public class ascoltatore implements ActionListener, MouseListener {
 				resultsTitleSimple = results;
 				
 				/* 4. display results */
-				System.out.println("Found " + results.length + " hits.");
 				if(tipoRicerca == 1){
 					//Se sono qui sto facendo la ricerca esatta per Titolo
 					for(int i=0; i < results.length; ++i) {
@@ -470,7 +470,6 @@ public class ascoltatore implements ActionListener, MouseListener {
 								break;
 							}
 						}
-						System.out.println("Score di " + d.get(IndexItem.TITLE_REAL) + " e': " + results[i].score);
 					}
 					
 					MyQuickSort res = new MyQuickSort();
@@ -505,7 +504,7 @@ public class ascoltatore implements ActionListener, MouseListener {
 		int countSimpleHits = Main.getPagina().getListener().getLengthSimpleResult();
 		IndexReader readerSimple;
 		IndexReader readerStemming;
-		Document docSelected;
+		
 		try {
 			readerSimple = DirectoryReader.open(Main.getPagina().getSimpleIndexLucene());
 			IndexSearcher searcherSimple = new IndexSearcher(readerSimple);
@@ -523,19 +522,11 @@ public class ascoltatore implements ActionListener, MouseListener {
 			
 			//Se sono loggato e faccio doppio click apro la finestra con il bottone libro letto
 			if(Main.getPagina().getLoginButton().getText().equals("Logout") && e.getClickCount() == 2) {
-				leggi_libro = new leggiLibro();
+				leggi_libro = new leggiLibro(this);
 				leggi_libro.setLibro(docSelected.get(IndexItem.TITLE_REAL), docSelected.get(IndexItem.AUTHOR), docSelected.get(IndexItem.KIND));
 				leggi_libro.setAlwaysOnTop(true);
 				leggi_libro.setVisible(true);
-
-				/* Se ho fatto clik sul bottone "Leggi" allora aggiungo il libro alla lista dei libri */
-				if(leggi_libro.isLibroLetto()) {
-					utente u = dialog.getUtenteLoggato();
-					LinkedList<Long> libriLetti = u.getLibri_letti();
-					libriLetti.add(Long.parseLong((docSelected.get(IndexItem.ID))));
-					u.setLibri_letti(libriLetti); 
-					new scriviXML(Main.getPagina().getUtenti());
-				}
+				
 			}
 			
 		} catch (IOException e1) {e1.printStackTrace();}

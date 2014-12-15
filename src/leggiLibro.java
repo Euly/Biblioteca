@@ -18,14 +18,15 @@ import net.miginfocom.swing.MigLayout;
 @SuppressWarnings("serial")
 public class leggiLibro extends JDialog{
 	private final JPanel contentPanel = new JPanel();
-	private ascoltatore listener = new ascoltatore(this);
+	private ascoltatore listener ;
 	private JLabel titolo ;
 	private JLabel autore ;
 	private JLabel genere ;
 	private Boolean letto = false;
 
-	public leggiLibro() {
+	public leggiLibro(ascoltatore listener) {
 		super(Main.getPagina().getFrameParent(), Dialog.ModalityType.DOCUMENT_MODAL);
+		this.listener = listener ;
 		initialize() ;
 	}
 	

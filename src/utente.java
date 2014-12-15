@@ -274,9 +274,6 @@ public class utente {
 						i_max_autore = i;
 				}
 			}
-		
-			System.out.println("Punteggio massimo genere " + i_max_genere + ": " + pt_g.get(i_max_genere));
-			System.out.println("Punteggio massimo autore " + i_max_genere + ": " + pt_a.get(i_max_autore));
 	
 			libri_consigliati = getLibroAutoreGenere(autori.get(i_max_autore), pt_a.get(i_max_autore), generi.get(i_max_genere), pt_g.get(i_max_genere));
 		
@@ -349,15 +346,19 @@ public class utente {
 		
 		if(hitsIntersection.size() == 0){
 			if(ptAutore_max > ptGenere_max){
-				for(int i = 0 ; i < hitsAuthor.length ; i++){
-					Document libro = SearchID(hitsAuthor[i]);
-					libri_autore_genere.add(libro);
+				for(int i = 0 ; i < hitsAuthor.length; i++){
+					if(!libri_letti.contains(hitsAuthor[i])){
+						Document libro = SearchID(hitsAuthor[i]);
+						libri_autore_genere.add(libro);
+					}
 				}
 			}
 			else {
 				for(int i = 0 ; i < hitsKind.length ; i++){
-					Document libro = SearchID(hitsKind[i]);
-					libri_autore_genere.add(libro);
+					if(!libri_letti.contains(hitsKind[i])){
+						Document libro = SearchID(hitsKind[i]);
+						libri_autore_genere.add(libro);
+					}
 				}
 			}
 		}

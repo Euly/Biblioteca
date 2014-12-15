@@ -89,8 +89,6 @@ public class login extends JDialog {
 		for(int i = 0; i < Main.getPagina().getUtenti().size(); i++){
 			if (Main.getPagina().getUtenti().get(i).getUser().equals(nome) && 
 					Main.getPagina().getUtenti().get(i).getPW().equals(password)){
-				System.out.println("Sei un utente registrato.");
-				System.out.println("Password inserita: "+ password);
 				utente_loggato = Main.getPagina().getUtenti().get(i);
 				Main.getPagina().setUtenteLoggato(utente_loggato);
 				return true ;
