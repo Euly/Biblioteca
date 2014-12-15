@@ -424,8 +424,14 @@ public class ascoltatore implements ActionListener, MouseListener {
 		int count = 0;
 		try {
 			Query q;
-			if(tipoRicerca == 2) //Se sono qui sto facendo la ricerca per Autore e uso l'edit distance.
-				q = new FuzzyQuery(new Term(matchField[0], querystr));
+			if(tipoRicerca == 2) { //Se sono qui sto facendo la ricerca per Autore e uso l'edit distance.
+				int maxDistance = 0;
+				if(querystr.length() > 3)
+					maxDistance = 2;
+				else
+					maxDistance = 1;
+				q = new FuzzyQuery(new Term(matchField[0], querystr), maxDistance);
+			}
 			else
 				q = new MultiFieldQueryParser(Version.LUCENE_42, matchField, Main.getPagina().getAnalyzer()).parse(querystr);
 
